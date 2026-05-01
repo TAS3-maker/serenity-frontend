@@ -24,14 +24,14 @@ export const WebNav = ({ active, onNav }) => {
 
   return (
     <nav
-      className="sticky top-0 z-[200] h-[68px] flex items-center justify-between transition-all duration-300 shadow-2xl"
+      className="sticky bg-white top-0 z-[200] flex items-center justify-between transition-all duration-300 shadow-[0px_4px_4px_rgba(0,0,0,0.25)]"
       style={{
-        padding: "0 52px",
-        background: "var(--bgNav)",
+        padding: "12px 52px",
+        
         backdropFilter: "blur(24px)",
         WebkitBackdropFilter: "blur(24px)",
         borderBottom: scrolled ? "1px solid var(--border)" : "1px solid transparent",
-        boxShadow: scrolled ? "0 1px 12px rgba(0,0,0,0.06)" : "none",
+       
       }}
     >
       {/* Logo */}
