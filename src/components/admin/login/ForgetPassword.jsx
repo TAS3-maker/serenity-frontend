@@ -3,40 +3,33 @@ import { Eye, EyeOff } from "../../../lib/icons";
 import { C } from "../../../tokens";
 import { AInp } from "../AdminShared";
 import { api } from "../../../lib/api";
-import logo from "../../../assets/logo.png"
+import forgetPassword from "../../../assets/forgetPassword.png"
 import rectangle from "../../../assets/rectangle.png"
 import finalLogo from "../../../assets/finalLogo.png"
 import { useNavigate } from "react-router-dom";
 
-// Demo credentials are read from Vite env vars so they're never hard-coded
-// in the bundle. In production set VITE_DEMO_ADMIN_EMAIL / VITE_DEMO_ADMIN_PASSWORD
-// to empty strings to hide the auto-fill helper entirely.
-const DEMO_EMAIL    = import.meta.env.VITE_DEMO_ADMIN_EMAIL    || "";
-const DEMO_PASSWORD = import.meta.env.VITE_DEMO_ADMIN_PASSWORD || "";
-const DEMO_CREDS_AVAILABLE = !!(DEMO_EMAIL && DEMO_PASSWORD);
 
-export const AdminLogin = ({ onSuccess, onBack }) => {
+
+export const ForgetPassword = ({ onSuccess, onBack }) => {
   const [email, setEmail]   = useState("");
-  const [pw, setPw]         = useState("");
-  const [showPw, setShowPw] = useState(false);
+
   const [err, setErr]       = useState("");
   const [loading, setLoading] = useState(false);
 const navigate=useNavigate()
-  const doLogin = async (e) => {
+  const hanldeForget = async (e) => {
     e.preventDefault()
     setErr("");
-    if (!email || !pw) { setErr("Email and password required."); return; }
+    if (!email) { setErr("Email is required."); return; }
     setLoading(true);
     try {
-      const data = await api.auth.adminLogin(email.trim(), pw);
-      const token = data.token || data.accessToken;
-      if (!token) throw new Error(data.message || "Login failed");
+      const data = await api.auth.forgetPassword(email.trim());
       // The backend has set an httpOnly cookie. We also keep the token
       // in-memory as a fallback for cookie-blocked environments — but never
       // persist it to sessionStorage / localStorage (XSS-safe).
-      api.setToken(token);
-      onSuccess()
-      
+      navigate("/admin/reset-password", {
+      state: { email }
+    });
+
     } catch (e) {
       setErr(e?.data?.message || e?.message || "Invalid email or password.");
     } finally {
@@ -62,58 +55,29 @@ const navigate=useNavigate()
              
                     {/* Dynamic Name */}
                     <h1 className="text-2xl flex justify-center items-center font-bold mb-2 text-left ">
-                        Welcome Back
+                       Forgot Password
                     </h1>
                     <p className=" text-gray-400 flex justify-center items-center mb-6">
-                        Enter your Email and Password to login
+                        Enter your email to forgot password.
                     </p>
 
                     {/* Form */}
-                    <form onSubmit={doLogin} className="space-y-">
+                    <form onSubmit={hanldeForget} className="space-y-">
                     <div className="space-y-2 mb-4">
                        
                             <input
                                 type="email"
                                 id="email"
-                                className="w-full mt-1 px-3 py-4 border rounded-md focus:outline-none focus:ring focus:ring-blue-500"
+                                className="w-full mt-1 px-3 py-4 border rounded-lg focus:outline-none focus:ring focus:ring-blue-500"
                                 placeholder="Enter email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
                             />
                         </div>
-                        <div className="space-y-2 relative">
-      
-      <input
-        type={showPw ? 'text' : 'password'}
-        id="password"
-        className="w-full mt-1 px-3 py-4 border rounded-md focus:outline-none focus:ring focus:ring-blue-500 pr-10"
-        placeholder="Enter password"
-        value={pw}
-        onChange={(e) => setPw(e.target.value)}
-        required
-
-        
-      />
-   <span
-  className="absolute right-3 top-5 -translate-y-1/2 cursor-pointer text-gray-600"
-  onClick={() => setShowPw(!showPw)}
->
-
-        {showPw ? <EyeOff size={20} /> : <Eye size={20} />}
-      </span>
-    </div>
+                  
     
-                       
-                        {/* Forgot Password */}
-                        <div className="text-right m-5" onClick={()=>navigate("/admin/forgot-password")}>
-                           
-                                {/* Forgot password? */}
-                    
-                            <span to="/updatepassword" className="text-gray-500 italic text-sm">
-                              Forgot password?
-                            </span>
-                        </div>
+                
 
                         {/* Login Button */}
                         {loading ?  ( <button
@@ -123,14 +87,14 @@ const navigate=useNavigate()
                        
                         </button>):(<button
                           type="submit"
-                          disabled={!email || !pw}
-                          className={`w-full py-2 rounded-md transition
-                            ${!email || !pw
+                          disabled={!email}
+                          className={`w-full py-3 rounded-lg transition
+                            ${!email 
                               ? 'bg-[rgba(13,115,119,1)] text-white cursor-not-allowed'
-                              : 'bg-[rgba(13,115,119,1)] text-white hover:bg-[#2c2b2b]'}
+                              : 'bg-[rgba(13,115,119,1)] text-white'}
                           `}
                         >
-                          Login
+                         Send
                         </button>
 
                         )}
@@ -167,7 +131,7 @@ const navigate=useNavigate()
   {/* Centered logo */}
   <div className="absolute inset-0 flex items-center justify-center z-10">
     <img
-      src={logo}
+      src={forgetPassword}
       alt="Logo"
       className="w-100 h-100 object-contain"
     />
