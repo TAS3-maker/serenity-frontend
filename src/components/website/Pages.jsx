@@ -5,15 +5,22 @@ import { useFAQs } from "../../FAQContext";
 import { PLANS as STATIC_PLANS } from "../../data/index";
 import { api } from "../../lib/api";
 import { Hero, Sec, Heading, CheckItem, StatCard, Stars } from "./shared";
+import HowItWork from "./howitwork/HowItWork";
+import Programslayout from "./programs/Programslayout";
 
 // ─── How It Works ───────────────────────────────────────────────
 export const WebHowItWorks = ({ showToast }) => (
   <div>
-    <Hero tag="The science" align="left"
-      h="How SerenityDecoded works"
-      sub="A behavioral reprogramming system rooted in clinical psychology — not budgeting advice, not spreadsheets, not willpower." />
+    
+    <HowItWork />
 
-    <Sec>
+
+
+    {/* <Hero tag="The science" align="left"
+      h="How SerenityDecoded works"
+      sub="A behavioral reprogramming system rooted in clinical psychology — not budgeting advice, not spreadsheets, not willpower." /> */}
+
+    {/* <Sec>
       <div className="grid grid-cols-2 gap-x-20 gap-y-14">
         {[
           { n:"01", title:"Stress Profile Assessment",    desc:"A 5-minute questionnaire identifies your Financial Stress Profile — Avoider, Anxious Manager, or Silent Stressor. Your profile is the foundation for everything that follows." },
@@ -30,9 +37,9 @@ export const WebHowItWorks = ({ showToast }) => (
           </div>
         ))}
       </div>
-    </Sec>
+    </Sec> */}
 
-    <Sec bg="var(--bgMuted)">
+    {/* <Sec bg="var(--bgMuted)">
       <Heading tag="Built on evidence" h="The science behind it" sub="Three established frameworks, integrated into a single daily practice." />
       <div className="grid grid-cols-3 gap-6">
         {[
@@ -47,7 +54,7 @@ export const WebHowItWorks = ({ showToast }) => (
           </div>
         ))}
       </div>
-    </Sec>
+    </Sec> */}
   </div>
 );
 

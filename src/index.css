@@ -1,5 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&display=swap');
 
+@import url('https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap');
+
 /* ─── CSS Design Token Variables ──────────────────────────────── */
 :root {
   /* Backgrounds — 70% of all UI */
@@ -79,7 +81,7 @@
 
   html, body, #root {
     height: 100%;
-    font-family: 'Inter', 'Poppins', sans-serif;
+    font-family: 'Inter', 'Poppins', 'Jost' sans-serif;
     background: var(--bg);
     color: var(--text);
     -webkit-font-smoothing: antialiased;

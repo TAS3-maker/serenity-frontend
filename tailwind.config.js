@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
@@ -20,6 +21,7 @@ export default {
         sans:    ['"Inter"', '"Poppins"', 'sans-serif'],
         display: ['"Poppins"', '"Inter"', 'sans-serif'],
         serif:   ['"Playfair Display"', 'Georgia', 'serif'],
+        jost: ['"Jost"', "sans-serif"],
       },
       fontSize: {
         // Brand spec typography sizes
