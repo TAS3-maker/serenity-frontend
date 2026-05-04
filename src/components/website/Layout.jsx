@@ -7,7 +7,7 @@ export const WebNav = ({ active, onNav }) => {
   const [scrolled, setScrolled] = useState(false);
   const { theme, toggle } = useTheme();
 
-  useEffect(() => {
+  useEffect(() => {``
     const handler = () => setScrolled(window.scrollY > 10);
     const el = document.querySelector('[data-scroll]');
     const target = el || window;

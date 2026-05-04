@@ -195,7 +195,7 @@ const admin = {
   configAll:     ()             => get('/api/admin/config/all'),
   configSet:     (key, value)   => post('/api/admin/config', { key, value }),
   configBatch:   (obj)          => post('/api/admin/config/batch', obj),
-  dashboardStats:()             => get('/api/admin/dashboard/stats'),
+  dashboardStats:()             => get('/api/admin/analytics'),
 };
 const notifications = {
   list:    ()       => get('/api/notifications'),
