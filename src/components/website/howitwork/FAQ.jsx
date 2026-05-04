@@ -1,6 +1,6 @@
 import { useState } from "react";
-import arrowDown from "./assets/downarrow.svg";
-import arrowUp from "./assets/uparrow.svg";
+import arrowDown from "../assets/downarrow.svg";
+import arrowUp from "../assets/uparrow.svg";
 
 const faqs = [
   {

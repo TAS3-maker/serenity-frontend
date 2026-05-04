@@ -7,6 +7,7 @@ import { api } from "../../lib/api";
 import { Hero, Sec, Heading, CheckItem, StatCard, Stars } from "./shared";
 import HowItWork from "./howitwork/HowItWork";
 import Programslayout from "./programs/Programslayout";
+import AboutUsLayout from "./aboutus/AboutUsLayout";
 
 // ─── How It Works ───────────────────────────────────────────────
 export const WebHowItWorks = ({ showToast }) => (
@@ -60,68 +61,13 @@ export const WebHowItWorks = ({ showToast }) => (
 
 // ─── Programs & Pricing ─────────────────────────────────────────
 export const WebPrograms = ({ showToast }) => {
-  const [billing, setBilling] = useState("one_time");
-  const { faqs } = useFAQs();
-  const publishedFaqs = faqs.filter(f => f.published).sort((a, b) => a.order - b.order);
-
-  // Pull plans from the API (admin-managed via Settings.memberships) and
-  // fall back to the bundled defaults so the page renders without a flash.
-  const [apiPlans, setApiPlans] = useState(STATIC_PLANS);
-  useEffect(() => {
-    let cancelled = false;
-    api.content.planList()
-      .then(({ items = [] }) => { if (!cancelled && items.length) setApiPlans(items); })
-      .catch(() => { /* fall back to STATIC_PLANS */ });
-    return () => { cancelled = true; };
-  }, []);
-
-  const plans = apiPlans.map(p => ({
-    ...p,
-    price: billing === "monthly" && p.price > 0 ? 12 : p.price,
-    interval: billing === "monthly" && p.price > 0 ? "monthly" : p.interval,
-  }));
+  
 
   return (
     <div>
-      <Hero tag="Programs & Pricing" align="center"
-        h="Choose your path to financial calm"
-        sub="Start free. Go deeper when you are ready.">
-        {/* Billing toggle */}
-        <div className="flex items-center justify-center mt-8">
-          <div className="inline-flex items-center rounded-xl p-1 gap-1"
-            style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.12)" }}>
-            {[["one_time","One-time"],["monthly","Monthly"]].map(([v, l]) => (
-              <button key={v} onClick={() => setBilling(v)}
-                className="px-5 py-2 rounded-lg text-sm font-semibold font-sans border-none cursor-pointer transition-all"
-                style={{ background: billing === v ? C.teal : "transparent", color: billing === v ? "#fff" : "rgba(255,255,255,0.5)" }}>
-                {l}
-              </button>
-            ))}
-          </div>
-        </div>
-      </Hero>
-
-      <Sec bg="var(--bgMuted)">
-        {/* Plan cards */}
-        <div className="grid grid-cols-2 gap-8 max-w-[860px] mx-auto mb-16">
-          {plans.map(plan => <PlanCard key={plan.id} plan={plan} showToast={showToast} />)}
-        </div>
-
-        {/* Comparison note */}
-        <div className="max-w-[640px] mx-auto text-center mb-16 p-6 rounded-2xl" style={{ background: "var(--bgCard)", border: "1px solid var(--border)" }}>
-          <p className="text-sm text-[var(--textMuted)] leading-[1.7]">
-            Not sure which to start with? Begin free — 93% of people who complete the 7-Day program choose to continue with the Sprint. No pressure, no time limit on the free plan.
-          </p>
-        </div>
-
-        {/* FAQ */}
-        <div className="max-w-[700px] mx-auto">
-          <h2 className="font-display font-bold text-[var(--text)] text-center mb-10 tracking-[-0.5px]" style={{ fontSize: 36 }}>Common questions</h2>
-          <div className="space-y-3">
-            {publishedFaqs.map((f, i) => <FAQItem key={f.id ?? i} q={f.q} a={f.a} />)}
-          </div>
-        </div>
-      </Sec>
+      
+        <Programslayout />
+    
     </div>
   );
 };
@@ -165,6 +111,11 @@ export const WebAbout = ({ showToast }) => {
 
   return (
   <div>
+
+
+<AboutUsLayout/>
+
+
     <Hero tag="Our story" align="left"
       h={<>Money distress is a<br />mental health issue.<br />We built the tool for it.</>}
       sub="SerenityDecoded exists because every financial product we found ignored the emotional reality of money. The advice was correct. The delivery was wrong." />

@@ -1,4 +1,4 @@
-// DecodingSection.jsx
+
 
 import phone from "../assets/decodingphn.png";
 import qr from "../assets/scannercode.png";
@@ -6,7 +6,7 @@ import appstore from "../assets/appstore.png";
 import googleplay from "../assets/googleplay.png";
 
 
-export default function DecodingSection() {
+export default function AboutDecoding() {
   return (
     <section className="bg-[#F3F5F4] py-16 px-4 font-jost">
       <div className="w-full max-w-[1130px] mx-auto grid md:grid-cols-2 gap-10 items-center">
