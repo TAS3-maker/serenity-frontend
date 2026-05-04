@@ -1,5 +1,5 @@
-import illustration from "./assets/piggybank.png";
-import checkicon from './assets/checkicon.svg';
+import illustration from "../assets/piggybank.png";
+import checkicon from '../assets/checkicon.svg';
 
 const items = [
   {

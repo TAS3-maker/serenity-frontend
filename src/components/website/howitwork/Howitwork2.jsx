@@ -1,9 +1,9 @@
 
-import download from "./assets/download.svg";
-import program from "./assets/program.svg";
-import target from "./assets/target.svg";
-import thinking from "./assets/thinking.svg";
-import artificialintelligence from "./assets/artificialintelligence.svg";
+import download from "../assets/download.svg";
+import program from "../assets/program.svg";
+import target from "../assets/target.svg";
+import thinking from "../assets/thinking.svg";
+import artificialintelligence from "../assets/artificialintelligence.svg";
 
 const features = [
   {
