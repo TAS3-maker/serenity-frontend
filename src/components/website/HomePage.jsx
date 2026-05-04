@@ -2,7 +2,10 @@ import { useState, useEffect } from "react";
 import { C } from "../../tokens";
 import { Sec, Heading, Stars, AvatarStack } from "./shared";
 import { api } from "../../lib/api";
-
+import profileBox1 from "../../assets/profileBox1.png"
+import profileBox2 from "../../assets/profileBox2.png"
+import profileBox3 from "../../assets/profileBox3.png"
+import IKISDWImg from "../../assets/IKISDW.png"
 // Map API accent names → design-token colors so admins can edit copy without
 // hard-coding hex values. Anything unknown falls back to teal.
 const ACCENT = {
@@ -52,17 +55,13 @@ Serenity Aligned™ is the world's first complete ecosystem built to decode the 
 — through a proprietary groundbreaking book, a daily practice App, and an Aarav The Serenity Genie™ companion that understands you.      
       </p>
             <div className="flex gap-3 mb-10 max-w-[480px]">
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)}
-                onKeyDown={e => e.key === "Enter" && submit()} placeholder="your@email.com" className="w-input flex-1" />
-              <button onClick={submit} className="w-btn-primary flex-shrink-0">Start free →</button>
+          
+              <button onClick={submit} className="w-btn-primary flex-shrink-0">Download the App</button>
             </div>
             <div className="flex flex-wrap gap-8">
               <AvatarStack />
               <div className="flex items-center gap-2"><Stars /><span className="text-sm text-[var(--textMuted)]">4.9 · 312 reviews</span></div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full animate-pulse-dot" style={{ background: C.green }} />
-                <span className="text-sm text-[var(--textMuted)]">Free · No credit card</span>
-              </div>
+         
             </div>
           </div>
 
@@ -81,59 +80,72 @@ Serenity Aligned™ is the world's first complete ecosystem built to decode the 
       
       {/* First Box */}
       <div
-        className="rounded-xl"
+        className="rounded-xl flex  flex-col p-2 m-2 gap-2 border border-[rgba(13,115,119,1)]"
         style={{
           width: "100%",
           height: 136,
-          background: "rgba(13, 115, 119, 1)",
-          border: "1px solid var(--border)"
+          background: "rgba(17,43,58,1)",
+       
         }}
-      />
+      >
+
+<span className="text-white text-sm ">YOUR STRESS PROFILE</span>
+<h1 className="text-white text-lg text-bold">The Avoider</h1>
+<p className="text-white text-md text">Your avoidance is a learned response, not a character flaw.</p>
+      </div>
 
       {/* Bottom (Middle) Box */}
       <div
-        className="rounded-xl"
+        className="rounded-xl flex  flex-col p-2 m-2 gap-2"
         style={{
           width: "100%",
           height: 91,
-          background: "rgba(32, 32, 49, 1)"
+          background: "rgba(17,43,58,1)"
         }}
-      />
+      >
+
+<span className="text-white text-sm ">TODAY'S MISSION</span>
+<h1 className="text-white text-lg text-bold">The Avoidance Map</h1>
+
+      </div>
 
       {/* Third Box */}
       <div
-        className="rounded-xl"
+        className="rounded-xl p-2 m-2 gap-2 border border-[rgba(13,115,119,1)]"
         style={{
           width: "100%",
           height: 75,
-          background: "rgba(13, 115, 119, 1)",
-          border: "1px solid var(--border)"
+          background: "rgba(17,43,58,1)",
+        
         }}
-      />
+      >
+
+<h1 className="text-white">7-day progress</h1>
+<span className="text-white">You,re building something real</span>
+
+      </div>
 
     </div>
 
     {/* Floating badge top right */}
     <div
-      className="float-1 absolute -top-4 -right-5 flex items-center gap-2 px-3 py-2 rounded-xl z-20"
+      className=" absolute -top-4 -left-20 flex items-center gap-2 px-3 py-2 rounded-full z-20"
       style={{ background: "var(--bgCard)", border: "1px solid var(--border)", boxShadow: "var(--shadow)" }}
     >
       <div className="w-2 h-2 rounded-full" style={{ background: C.green }} />
       <span className="text-xs font-bold" style={{ color: C.green }}>
-        7-day streak
+   Assessment Complete
       </span>
     </div>
 
     {/* Floating badge bottom left */}
     <div
-      className="float-2 absolute -bottom-4 -left-6 px-3 py-2.5 rounded-xl z-20"
-      style={{ background: "var(--bgCard)", border: "1px solid var(--border)", boxShadow: "var(--shadow)" }}
+      className=" absolute -bottom-4 -right-20 px-3 py-2.5 rounded-full z-20 bg-[rgba(13,115,119,1)]"
+      
     >
-      <div className="text-[10px] text-[var(--textMuted)] font-medium">
-        Weekly goal
-      </div>
-      <div className="font-display font-bold text-base" style={{ color: C.gold }}>
-        Met — well done
+      
+      <div className="font-display text-white font-semibold text-base " >
+Relief score: 68/100
       </div>
     </div>
 
@@ -142,19 +154,7 @@ Serenity Aligned™ is the world's first complete ecosystem built to decode the 
         </div>
       </div>
 
-      {/* Ticker */}
-      <div className="absolute bottom-0 left-0 right-0 py-3.5 overflow-hidden border-t border-[var(--tealBorder)]"
-        style={{ background: "rgba(13,115,119,0.03)" }}>
-        <div className="marquee flex gap-16 whitespace-nowrap">
-          {Array.from({ length: 2 }).map((_, ri) => (
-            <div key={`marquee-row-${ri}`} className="flex gap-16">
-              {["Free 7-day program","No credit card required","Results in 72 hours","Built on CBT and behavioral economics","Your data is never sold","Used in 47 countries","4.9 stars from 312 verified reviews"].map((t) => (
-                <span key={`marquee-${ri}-${t}`} className="text-[13px] font-medium text-[var(--textMuted)]">{t}</span>
-              ))}
-            </div>
-          ))}
-        </div>
-      </div>
+ 
     </section>
   );
 };
@@ -167,27 +167,71 @@ const DEFAULT_PROFILES = [
   { label:"Silent Stressor", pct:"20%", accent:"navy",  desc:"Everything looks fine from outside. Inside you carry the weight alone. Financial silence has a real and compounding cost." },
 ];
 
-const Profiles = ({ profiles = DEFAULT_PROFILES }) => (
-  <Sec bg="var(--bgMuted)">
-    <Heading tag="You are not broken. You are patterned." h="Which one sounds like you?" sub="Every financial behaviour is a stress response. Once you name yours, you can change it." />
-    <div className="grid grid-cols-3 gap-6">
-      {profiles.map((p) => {
-        const a = accentOf(p.accent);
-        return (
-          <div key={p.label} className="w-card group" data-testid={`home-profile-${(p.label || '').toLowerCase().replace(/\s+/g, '-')}`}>
-            <div className="h-1 w-10 rounded-full mb-6 transition-all duration-300 group-hover:w-16" style={{ background: a.color }} />
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-display font-bold text-lg text-[var(--text)]">{p.label}</h3>
-              <span className="text-xs font-bold px-2.5 py-1 rounded-lg" style={{ background: a.bg, color: a.color, border: `1px solid ${a.border}` }}>{p.pct}</span>
-            </div>
-            <p className="text-[15px] text-[var(--textMuted)] leading-[1.75]">{p.desc}</p>
-          </div>
-        );
-      })}
-    </div>
-  </Sec>
-);
+const Profiles = () => (
+  <section className="py-20 bg-white text-center">
+    <div className="web-container">
+      
+      <p className="text-sm font-semibold font-jost  text-[rgba(13,115,119,1)] mb-2">
+        The Serenity Aligned™ Ecosystem
+      </p>
 
+      <h1 className="text-[40px] font-bold ">
+        Three ways to decode the mind.
+      </h1>
+      <h2 className="text-[40px] font-bold font-jost  text-[var(--teal)] mb-6">
+        One connected system.
+      </h2>
+
+      <p className="text-md text-[var(--textMuted)] max-w-[700px] mx-auto mb-10">
+        Every piece is complete on its own. Together, they create something no single app,
+        community, book, or chatbot can — a complete behavioural change ecosystem.
+      </p>
+
+      <div className="grid grid-cols-3 gap-6">
+        {[
+          {
+            title: "Decoding Money Serenity™",
+            desc: "The psychological framework that explains everything. Why you avoid, overthink, or carry financial stress alone — and what your nervous system is actually doing when money feels hard.",
+            btn: "Get the Book",
+            img:profileBox1
+          },
+          {
+            title: "Serenity Aligned™",
+            desc: "Take the Financial Calm Assessment™, discover your stress profile, and receive a personalised program built around your pattern.",
+            btn: "Download the App",
+            img:profileBox2
+          },
+          {
+            title: "Aarav The Serenity Genie™",
+            desc: "An AI companion built specifically for the psychology of financial stress. Understands how you think and responds accordingly.",
+            btn: "Meet Aarav",
+            img:profileBox3
+          },
+        ].map((c, i) => (
+          <div
+            key={i}
+            className="p-6 rounded-2xl border-t-4 border-[rgba(13,115,119,1)] bg-white text-left shadow-md"
+           
+          >
+            <div className="w-12 h-12 rounded-full object-cover bg-[var(--teal)] mb-4" >
+              <img src={c.img} alt="" />
+            </div>
+
+            <h2 className="font-bold font-jost mb-2">{c.title}</h2>
+
+            <p className="text-sm text-[var(--textMuted)] mb-5 leading-[1.6]">
+              {c.desc}
+            </p>
+
+            <button className="px-4 py-2 text-sm rounded-lg bg-[var(--teal)] text-white">
+              {c.btn}
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+);
 // ─── Process steps ──────────────────────────────────────────────
 const DEFAULT_STEPS = [
   { n:"01", title:"Take the Assessment",      desc:"5 minutes to identify your Financial Stress Profile using a validated psychological questionnaire." },
@@ -196,30 +240,130 @@ const DEFAULT_STEPS = [
   { n:"04", title:"Track Your Relief Score",  desc:"Watch your Money Relief Score climb in real time — the only metric that captures how money actually feels." },
 ];
 
-const Process = ({ steps = DEFAULT_STEPS }) => (
-  <section className="web-section" style={{ background: C.navy }}>
+const Process = ({ profiles = [] }) => (
+  <section
+    className="py-12 text-center"
+    style={{ background: "rgba(243, 245, 244, 1)" }}
+  >
     <div className="web-container">
-      <Heading tag="The process" h="How SerenityDecoded works" sub="Not a budgeting tool. A behavioral reprogramming system." light />
-      <div className="grid grid-cols-2 gap-5">
-        {steps.map((s) => (
-          <div key={s.n} className="p-8 rounded-2xl transition-all duration-300 hover:-translate-y-1"
-            style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
-            <div className="font-display font-black text-[56px] leading-none mb-5" style={{ color: "rgba(13,115,119,0.35)" }}>{s.n}</div>
-            <h3 className="font-display font-semibold text-white text-xl mb-3">{s.title}</h3>
-            <p className="text-[15px] text-white/50 leading-[1.75]">{s.desc}</p>
+
+      {/* Top intro */}
+      <p className="text-sm  mb-2 text-[rgba(13,115,119,1)]">
+        Which pattern do you recognise in yourself?
+      </p>
+
+      <h2 className="text-[40px] font-jost font-bold ">
+        Financial stress isn’t one thing.
+      </h2>
+
+      <h3 className="text-[40px] font-bold font-jost text-[rgba(13,115,119,1)] mb-6">
+        It’s one of three.
+      </h3>
+
+      <p className="text-sm text-[var(--textMuted)] max-w-[720px] mx-auto mb-12 leading-[1.7]">
+        The SerenityAligned framework identifies three deeply wired psychological
+        responses to money. All of them make sense. None of them have to be permanent.
+      </p>
+
+      {/* Cards */}
+      <div className="grid grid-cols-3 gap-6 text-left">
+        {profiles.map((p, i) => (
+          <div
+            key={i}
+            className="p-6 rounded-xl bg-white  transition-all duration-200 shadow-md hover:shadow-xl  border border-[rgba(13,115,119,1)]"
+      
+          >
+            {/* LABEL BADGE */}
+            <div className="text-lg font-jost  font-bold tracking-wide text-[var(--teal)] mb-3 uppercase">
+              {p.label}
+            </div>
+
+            {/* BOLD LINE */}
+            <p className="font-semibold text-[var(--text)] mb-2 leading-[1.4]">
+              {p.short}
+            </p>
+
+            {/* DESCRIPTION */}
+            <p className="text-[13px] text-[var(--textMuted)] leading-[1.6]">
+              {p.desc}
+            </p>
           </div>
         ))}
+      </div>
+
+      {/* CTA */}
+      <div className="mt-10">
+        <button className="px-6 py-2.5 rounded-lg bg-[var(--teal)] text-white text-sm font-semibold hover:opacity-90 transition">
+          Discover Your Profile
+        </button>
       </div>
     </div>
   </section>
 );
-
 // ─── Testimonials ───────────────────────────────────────────────
 const DEFAULT_QUOTES = [
   { q:"I stopped avoiding my bank app after day 3. That has never happened in six years.", name:"Sarah M.", role:"The Avoider" },
   { q:"It is the first financial tool that understands why I feel the way I do about money.", name:"Marcus T.", role:"Anxious Manager" },
   { q:"I cried reading the Day 1 mission card. Someone finally understood what I was carrying.", name:"Priya R.", role:"Silent Stressor" },
 ];
+
+
+
+const IKISDW=({showToast})=>{
+  return (
+  <section
+    className="  text-center py-12"
+ 
+  >
+    <div className="web-container">
+
+      {/* Top intro */}
+      <p className="text-sm  mb-2 text-[rgba(13,115,119,1)]">
+        How We Help
+      </p>
+
+      <h1 className="text-[40px] font-jost font-bold ">
+        From 'I Know I should deal with<br/>
+ <span className="text-[var(--teal)]  relative">
+            this' to 'I actually have.'
+              </span>
+      </h1>
+
+      <p className="text-sm text-gray-500  max-w-[720px] mx-auto mb-12 ">
+       The SerenityAligned™ ecosystem is built around a single progression: Recognition → Interruption →
+Integration. Three stages. Three products. One outcome.
+
+      </p>
+
+    <img src={IKISDWImg} alt="" className="w-full h-full object-cover" srcset="" />
+   <p className="text-md text-gray-400  max-w-[720px] mx-auto mb-4  mt-4">
+This isn't a three-step process that ends. It's a practice that compounds. Every day you show up, the pattern
+shifts a little more.
+
+      </p>
+      {/* CTA */}
+      <div className="mt-4">
+        <button className="px-6 py-2.5 rounded-lg bg-[var(--teal)] text-white text-sm font-semibold hover:opacity-90 transition">
+          Begin with the assessment
+        </button>
+      </div>
+    </div>
+  </section>
+
+  )
+  
+
+
+}
+
+
+
+
+
+
+
+
+
 
 const Testimonials = ({ quotes = DEFAULT_QUOTES, stats }) => {
   const tiles = [
@@ -430,7 +574,8 @@ export const WebHome = ({ onNav, showToast }) => {
     <>
       <Hero showToast={showToast} />
       <Profiles profiles={site?.profiles} />
-      <Process steps={site?.steps} />
+  <Process profiles={site?.profiles} />
+ <IKISDW showToast={showToast} />
       <Testimonials quotes={site?.testimonials} stats={stats} />
       <AppDownload showToast={showToast} />
       <CTA showToast={showToast} />
