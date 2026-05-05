@@ -42,7 +42,7 @@ export default function SerenityTabs() {
         </p>
 
         {/* Main Heading */}
-        <h1 className="text-2xl md:text-4xl lg:text-5xl lh-1 font-bold font-jost text-gray-900 leading-snug w-full m-auto max-w-6xl">
+        <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold font-jost text-gray-900 leading-snug w-full m-auto max-w-6xl">
           Three components. Each complete. Each{" "}
           <span className="text-[#0D7377]">independent. Each connected.</span>
         </h1>
