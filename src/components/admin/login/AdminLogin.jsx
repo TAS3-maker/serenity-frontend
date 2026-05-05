@@ -7,6 +7,7 @@ import logo from "../../../assets/logo.png"
 import rectangle from "../../../assets/rectangle.png"
 import finalLogo from "../../../assets/finalLogo.png"
 import { useNavigate } from "react-router-dom";
+import { Loader2 } from "lucide-react";
 
 // Demo credentials are read from Vite env vars so they're never hard-coded
 // in the bundle. In production set VITE_DEMO_ADMIN_EMAIL / VITE_DEMO_ADMIN_PASSWORD
@@ -31,10 +32,11 @@ const navigate=useNavigate()
       const data = await api.auth.adminLogin(email.trim(), pw);
       const token = data.token || data.accessToken;
       if (!token) throw new Error(data.message || "Login failed");
-      // The backend has set an httpOnly cookie. We also keep the token
-      // in-memory as a fallback for cookie-blocked environments — but never
-      // persist it to sessionStorage / localStorage (XSS-safe).
+   
       api.setToken(token);
+      console.log("token",token);
+      
+      setLoading(false);
       onSuccess()
       
     } catch (e) {
@@ -116,24 +118,24 @@ const navigate=useNavigate()
                         </div>
 
                         {/* Login Button */}
-                        {loading ?  ( <button
-                            type="submit"
-                            className="cursor-not-allowed flex justify-center  bg-[#2c2b2b] w-full py-2 rounded-md text-white"
-                        >
-                       
-                        </button>):(<button
-                          type="submit"
-                          disabled={!email || !pw}
-                          className={`w-full py-2 rounded-md transition
-                            ${!email || !pw
-                              ? 'bg-[rgba(13,115,119,1)] text-white cursor-not-allowed'
-                              : 'bg-[rgba(13,115,119,1)] text-white hover:bg-[#2c2b2b]'}
-                          `}
-                        >
-                          Login
-                        </button>
-
-                        )}
+               <button
+  type="submit"
+  disabled={loading || !email || !pw}
+  className={`w-full py-2 rounded-md flex items-center justify-center gap-2 transition
+    ${loading || !email || !pw
+      ? 'bg-[rgba(13,115,119,1)] text-white cursor-not-allowed'
+      : 'bg-[rgba(13,115,119,1)] text-white hover:bg-[#2c2b2b]'}
+  `}
+>
+  {loading ? (
+    <>
+      <Loader2 className="animate-spin" size={18} />
+      Logging in...
+    </>
+  ) : (
+    "Login"
+  )}
+</button>
                     </form>
 
                     {/* <p className="text-center text-gray-500 mt-4">

@@ -19,7 +19,49 @@ export const Spark = ({ data, color }) => {
     </div>
   );
 };
+export const ChartCard = ({ title, value, data = [], color }) => {
+  if (!data.length) return null;
 
+  const max = Math.max(...data, 1);
+
+  const points = data.map((v, i) => {
+    const x = (i / (data.length - 1)) * 100;
+    const y = 100 - (v / max) * 100;
+    return `${x},${y}`;
+  });
+
+  const path = `M ${points.join(" L ")}`;
+
+  return (
+    <div className="rounded-2xl p-5 border bg-[var(--adminCard)] border-[var(--border)]">
+      <div className="text-sm text-[var(--textMuted)] mb-1">
+        {title}
+      </div>
+
+      <div className="text-2xl font-bold text-[var(--text)] mb-4">
+        {value}
+      </div>
+
+      <svg viewBox="0 0 100 40" className="w-full h-28">
+        {/* AREA */}
+        <path
+          d={`${path} L 100 40 L 0 40 Z`}
+          fill={color}
+          opacity="0.08"
+        />
+
+        {/* LINE */}
+        <path
+          d={path}
+          fill="none"
+          stroke={color}
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+      </svg>
+    </div>
+  );
+};
 // ─── KPI card ──────────────────────────────────────────────────
 export const KPICard = ({ label, value, delta, deltaDir="up", sub, accent, sparkData }) => (
   <div className="rounded-2xl p-5 border" style={{ background:"var(--adminCard)", borderColor:"var(--border)", borderTop:`3px solid ${accent}` }}>
@@ -36,66 +78,124 @@ export const KPICard = ({ label, value, delta, deltaDir="up", sub, accent, spark
 );
 
 // ─── Conversion Funnel ─────────────────────────────────────────
-export const FunnelWidget = () => {
-  const FUNNEL = [
-    { label:"Visitors (7d)",       v:8420, pct:100 },
-    { label:"Started assessment",  v:2814, pct:33  },
-    { label:"Completed Day 1",     v:1284, pct:15  },
-    { label:"Active Day 3+",       v:892,  pct:11  },
-    { label:"Upgraded Premium",    v:221,  pct:3   },
-  ];
+export const FunnelWidget = ({ data = [] }) => {
   return (
-    <Card title="Conversion Funnel" sub="Last 7 days">
+    <div className="rounded-2xl p-5 border bg-[var(--adminCard)] border-[var(--border)]">
+      <h3 className="text-sm font-semibold text-[var(--text)] mb-1">
+        Conversion Funnel
+      </h3>
+      <p className="text-xs text-[var(--textMuted)] mb-4">
+        Last 7 days
+      </p>
+
       <div className="space-y-3">
-        {FUNNEL.map((f) => (
-          <div key={f.label}>
-            <div className="flex justify-between mb-1" style={{ fontSize:13 }}>
-              <span style={{ color:"var(--text)" }}>{f.label}</span>
-              <span style={{ fontWeight:700, color:"var(--text)" }}>{f.v.toLocaleString()} <span style={{ color:"var(--textMuted)", fontWeight:400 }}>({f.pct}%)</span></span>
+        {data.map((f, i) => (
+          <div key={i}>
+            <div className="flex justify-between text-xs mb-1">
+              <span className="text-[var(--textMuted)]">
+                {f.label}
+              </span>
+              <span className="font-semibold text-[var(--text)]">
+                {f.pct}%{" "}
+                <span className="text-[var(--textMuted)]">
+                  {f.value}
+                </span>
+              </span>
             </div>
-            <div style={{ height:8, background:"var(--bgMuted)", borderRadius:4, overflow:"hidden" }}>
-              <div style={{ width:`${f.pct}%`, height:"100%", background:`linear-gradient(90deg,${C.teal},${C.green})`, borderRadius:4, transition:"width .5s" }}/>
+
+            {/* THIN BAR (important) */}
+            <div className="h-[6px] bg-[var(--bgMuted)] rounded-full overflow-hidden">
+              <div
+                className="h-full rounded-full transition-all"
+                style={{
+                  width: `${f.pct}%`,
+                  background: "linear-gradient(90deg,#2F7E79,#3FA39A)",
+                }}
+              />
             </div>
           </div>
         ))}
       </div>
-    </Card>
+    </div>
   );
 };
 
-// ─── Stress Profile Split ──────────────────────────────────────
-export const ProfileSplitWidget = () => {
-  const PROFILES = [
-    { label:"The Avoider",     pct:48, color:C.teal  },
-    { label:"Anxious Manager", pct:32, color:C.gold  },
-    { label:"Silent Stressor", pct:20, color:C.green },
-  ];
+export const StressProfileCard = ({ data = [] }) => {
+  const colors = {
+    avoider: "#2F7E79",
+    anxious: "#D6A94C",
+    silent: "#7FB3B0",
+  };
+
+  let cumulative = 0;
+
   return (
-    <Card title="Stress Profile Split" sub="All users">
-      <div className="flex h-4 rounded-full overflow-hidden mb-4">
-        {PROFILES.map((p) => <div key={`bar-${p.label}`} style={{ width:`${p.pct}%`, background:p.color, transition:"width .5s" }}/>)}
+    <div className="rounded-2xl p-5 border bg-[var(--adminCard)] border-[var(--border)]">
+      <h3 className="text-sm font-semibold text-[var(--text)] mb-4">
+        Stress Profile Distribution
+      </h3>
+
+      <div className="flex items-center gap-6">
+        {/* CLEAN DONUT */}
+        <svg viewBox="0 0 36 36" className="w-28 h-28 rotate-[-90deg]">
+          {data.map((d, i) => {
+            const dash = `${d.pct} ${100 - d.pct}`;
+            const circle = (
+              <circle
+                key={i}
+                cx="18"
+                cy="18"
+                r="15.915"
+                fill="none"
+                stroke={colors[d.label]}
+                strokeWidth="3"
+                strokeDasharray={dash}
+                strokeDashoffset={-cumulative}
+              />
+            );
+            cumulative += d.pct;
+            return circle;
+          })}
+        </svg>
+
+        {/* LEGEND */}
+        <div className="flex-1 space-y-2 text-sm">
+          {data.map((d) => (
+            <div key={d.label} className="flex items-center gap-2">
+              <span
+                className="w-3 h-3 rounded-full"
+                style={{ background: colors[d.label] }}
+              />
+              <span className="capitalize text-[var(--text)]">
+                {d.label}
+              </span>
+              <span className="ml-auto text-[var(--textMuted)]">
+                {d.pct}%
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
-      <div className="space-y-2.5 mb-4">
-        {PROFILES.map((p) => (
-          <div key={p.label} className="flex items-center gap-2.5">
-            <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background:p.color }}/>
-            <span style={{ flex:1, fontSize:13, color:"var(--text)" }}>{p.label}</span>
-            <span style={{ fontFamily:"'Poppins',sans-serif", fontWeight:700, fontSize:14, color:p.color }}>{p.pct}%</span>
+
+      {/* COUNTS */}
+      <div className="grid grid-cols-3 gap-2 mt-4">
+        {data.map((d) => (
+          <div
+            key={d.label}
+            className="text-center py-2 rounded-lg bg-[var(--bgMuted)]"
+          >
+            <div className="font-semibold text-[var(--text)]">
+              {d.count}
+            </div>
+            <div className="text-xs text-[var(--textMuted)] capitalize">
+              {d.label}
+            </div>
           </div>
         ))}
       </div>
-      <div className="grid grid-cols-2 gap-2 pt-3" style={{ borderTop:"1px solid var(--border)" }}>
-        {[["Churn rate","3.1%"],["30-day conv.","17.2%"]].map(([l,v]) => (
-          <div key={l} className="text-center py-2 rounded-xl" style={{ background:"var(--bgMuted)" }}>
-            <div style={{ fontFamily:"'Poppins',sans-serif", fontWeight:700, fontSize:16, color:"var(--text)" }}>{v}</div>
-            <div style={{ fontSize:11, color:"var(--textMuted)", marginTop:2 }}>{l}</div>
-          </div>
-        ))}
-      </div>
-    </Card>
+    </div>
   );
 };
-
 // ─── Live Activity Feed ────────────────────────────────────────
 export const ActivityFeedWidget = () => {
   const FEED = [
@@ -126,56 +226,44 @@ export const ActivityFeedWidget = () => {
 };
 
 // ─── Mission Completion Table ──────────────────────────────────
-export const MissionTableWidget = () => {
-  const MISSIONS = [
-    { day:1, label:"Understanding Your Pattern", sent:1738, completed:1492, rate:86 },
-    { day:2, label:"Naming the Feeling",         sent:1605, completed:1316, rate:82 },
-    { day:3, label:"The Avoidance Map",          sent:1459, completed:1139, rate:78 },
-    { day:4, label:"Your Money Origin Story",    sent:1255, completed:929,  rate:74 },
-    { day:5, label:"The Guilt Cycle",            sent:1102, completed:793,  rate:72 },
-  ];
+export const MissionCompletionCard = ({ data = [] }) => {
   return (
-    <Card title="Mission Completion by Day" sub="Top 5 missions">
-      <div style={{ overflowX:"auto" }}>
-        <table style={{ width:"100%", borderCollapse:"collapse" }}>
-          <thead>
-            <tr style={{ background:"var(--bgMuted)" }}>
-              {["Day","Mission","Sent","Completed","Rate"].map(h => (
-                <th key={h} style={{ padding:"8px 12px", textAlign:"left", fontSize:10, fontWeight:700, color:"var(--textMuted)", textTransform:"uppercase", letterSpacing:".6px", whiteSpace:"nowrap" }}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {MISSIONS.map(m => (
-              <tr key={m.day} style={{ borderBottom:"1px solid var(--border)" }}>
-                <td style={{ padding:"10px 12px" }}>
-                  <div className="w-6 h-6 rounded-lg flex items-center justify-center font-bold text-xs text-white" style={{ background:C.teal }}>D{m.day}</div>
-                </td>
-                <td style={{ padding:"10px 12px", fontSize:12, color:"var(--text)", maxWidth:140, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{m.label}</td>
-                <td style={{ padding:"10px 12px", fontSize:12, fontWeight:600, color:"var(--text)" }}>{m.sent.toLocaleString()}</td>
-                <td style={{ padding:"10px 12px", fontSize:12, color:"var(--textMuted)" }}>{m.completed.toLocaleString()}</td>
-                <td style={{ padding:"10px 12px" }}>
-                  {(() => {
-                    const rateColor = m.rate > 80 ? C.green : m.rate > 70 ? C.teal : C.gold;
-                    return (
-                      <div className="flex items-center gap-2">
-                        <div style={{ flex:1, height:5, background:"var(--bgMuted)", borderRadius:3, overflow:"hidden", minWidth:40 }}>
-                          <div style={{ width:`${m.rate}%`, height:"100%", background:rateColor, borderRadius:3 }}/>
-                        </div>
-                        <span style={{ fontSize:11, fontWeight:700, color:rateColor, minWidth:28 }}>{m.rate}%</span>
-                      </div>
-                    );
-                  })()}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <div className="rounded-2xl p-5 border bg-[var(--adminCard)] border-[var(--border)]">
+      <h3 className="text-sm font-semibold text-[var(--text)] mb-4">
+        Mission Completion Rate by Day
+      </h3>
+
+      <div className="space-y-3">
+        {data.map((m, i) => (
+          <div key={i}>
+            <div className="flex justify-between text-xs mb-1">
+              <span className="text-[var(--textMuted)] truncate">
+                Day {i + 1} — {m.label}
+              </span>
+              <span className="text-[var(--text)] font-semibold">
+                {m.rate}%
+                <span className="text-[var(--textMuted)] ml-1">
+                  {m.completed}
+                </span>
+              </span>
+            </div>
+
+            {/* THIN PROGRESS BAR */}
+            <div className="h-[6px] bg-[var(--bgMuted)] rounded-full overflow-hidden">
+              <div
+                className="h-full rounded-full"
+                style={{
+                  width: `${m.rate}%`,
+                  background: "#2F7E79",
+                }}
+              />
+            </div>
+          </div>
+        ))}
       </div>
-    </Card>
+    </div>
   );
 };
-
 // ─── Users by Country ──────────────────────────────────────────
 export const CountryWidget = () => {
   const TOP_COUNTRIES = [
@@ -252,9 +340,9 @@ export const WIDGET_REGISTRY = [
   { id:"kpi_primary",    label:"Primary KPIs",           roles:["Super Admin","Content Editor","Support","Read Only"], component:null }, // assembled in Dashboard
   { id:"kpi_secondary",  label:"Secondary KPIs",         roles:["Super Admin","Content Editor","Support"],             component:null },
   { id:"funnel",         label:"Conversion Funnel",      roles:["Super Admin","Content Editor"],                       component:FunnelWidget },
-  { id:"profiles",       label:"Stress Profile Split",   roles:["Super Admin","Content Editor","Support"],             component:ProfileSplitWidget },
+  { id:"profiles",       label:"Stress Profile Split",   roles:["Super Admin","Content Editor","Support"],             component:StressProfileCard },
   { id:"activity",       label:"Live Activity Feed",     roles:["Super Admin","Content Editor","Support"],             component:ActivityFeedWidget },
-  { id:"missions",       label:"Mission Completion",     roles:["Super Admin","Content Editor"],                       component:MissionTableWidget },
+  { id:"missions",       label:"Mission Completion",     roles:["Super Admin","Content Editor"],                       component:MissionCompletionCard },
   { id:"countries",      label:"Users by Country",       roles:["Super Admin","Content Editor"],                       component:CountryWidget },
   { id:"revenue",        label:"Revenue Breakdown",      roles:["Super Admin"],                                        component:RevenueWidget },
   { id:"email",          label:"Email Performance",      roles:["Super Admin","Content Editor"],                       component:EmailStatsWidget },

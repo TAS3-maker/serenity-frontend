@@ -2,12 +2,13 @@ import { useState, useEffect } from "react";
 import { useTheme } from "../../ThemeContext";
 import { ThemeToggle } from "../ui/index";
 import { C } from "../../tokens";
-import finalLogo from "../../assets/finalLogo.png"
+import finalLogo from "../../assets/logoFooter.png"
+import headerLogo from "../../assets/finalLogo.png"
 export const WebNav = ({ active, onNav }) => {
   const [scrolled, setScrolled] = useState(false);
   const { theme, toggle } = useTheme();
 
-  useEffect(() => {
+  useEffect(() => {``
     const handler = () => setScrolled(window.scrollY > 10);
     const el = document.querySelector('[data-scroll]');
     const target = el || window;
@@ -40,7 +41,7 @@ export const WebNav = ({ active, onNav }) => {
         onClick={() => onNav("home")}
       >
         <img
-          src={finalLogo}
+          src={headerLogo}
           alt="SerenityDecoded"
           className="object-contain flex-shrink-0"
           style={{ width: 60, height: 60 }}
@@ -65,8 +66,8 @@ export const WebNav = ({ active, onNav }) => {
       <div className="flex items-center justify-end">
         <span
           onClick={() => onNav("admin")}
-          className="cursor-pointer font-semibold text-[14px]"
-          style={{ color: "var(--text)" }}
+          className="cursor-pointer font-semibold text-[14px] text-gray-500"
+   
         >
           Sign In
         </span>
@@ -75,24 +76,22 @@ export const WebNav = ({ active, onNav }) => {
   );
 };
 export const WebFooter = ({ onNav, showToast }) => (
-  <footer style={{ background: C.navy, padding: "72px 52px 48px" }}>
+  <footer className="bg-[rgba(13,115,119,1)]" style={{  padding: "72px 52px 48px" }}>
     <div className="web-container">
       <div className="grid gap-12 mb-16" style={{ gridTemplateColumns:"2fr 1fr 1fr 1fr" }}>
         {/* Brand */}
         <div>
           <div className="flex items-center gap-2.5 mb-4 cursor-pointer" onClick={() => onNav("home")}>
-            <img src="/assets/logo-mark.png" alt="SerenityDecoded" className="object-contain flex-shrink-0" style={{ width:44, height:44 }} />
-            <span className="font-display font-bold text-[18px] text-white tracking-tight">
-              Serenity<span style={{ color:C.teal }}>Decoded</span>
-            </span>
+            <img src={finalLogo} alt="SerenityDecoded" className="object-cover w-24 h-24"  />
+         
           </div>
-          <p style={{ fontSize:14, color:"rgba(255,255,255,0.45)", lineHeight:1.8, maxWidth:280, marginBottom:24 }}>
+          <p  className="text-white font-jost">
             Behavioral psychology tools for financial calm.<br/>Not another budgeting app.
           </p>
-          <div className="flex gap-2.5">
+          <div className="flex gap-2.5 mt-2 ">
             {["App Store","Google Play"].map(s=>(
-              <button key={s} onClick={()=>showToast(`${s} — coming soon`)}
-                style={{ background:"rgba(255,255,255,0.07)", border:"1px solid rgba(255,255,255,0.12)", borderRadius:9, padding:"8px 14px", color:"rgba(255,255,255,0.6)", fontSize:12, fontWeight:600, cursor:"pointer", fontFamily:"'Inter',sans-serif" }}>
+              <button className="text-white border border-white" key={s} onClick={()=>showToast(`${s} — coming soon`)}
+                style={{  borderRadius:9, padding:"8px 14px", fontSize:12, fontWeight:600, cursor:"pointer", fontFamily:"'Inter',sans-serif" }}>
                 {s}
               </button>
             ))}
@@ -106,11 +105,11 @@ export const WebFooter = ({ onNav, showToast }) => (
           { h:"Support",  links:[{l:"Help Center",n:null},{l:"Privacy Policy",n:null},{l:"Terms",n:null},{l:"Contact",n:null}] },
         ].map(({h,links})=>(
           <div key={h}>
-            <div style={{ fontSize:11, fontWeight:700, color:"rgba(255,255,255,0.28)", letterSpacing:"1.5px", textTransform:"uppercase", marginBottom:18 }}>{h}</div>
+            <div className="text-white font-bold font-jost " style={{  marginBottom:18 }}>{h}</div>
             {links.map(({l,n})=>(
-              <div key={l} onClick={()=>n?onNav(n):showToast(`${l} — coming soon`)}
-                style={{ fontSize:14, color:"rgba(255,255,255,0.5)", marginBottom:12, cursor:"pointer", transition:"color .15s" }}
-                onMouseEnter={e=>e.target.style.color="#fff"} onMouseLeave={e=>e.target.style.color="rgba(255,255,255,0.5)"}>
+              <div className="text-white" key={l} onClick={()=>n?onNav(n):showToast(`${l} — coming soon`)}
+                style={{ fontSize:14, marginBottom:12, cursor:"pointer", transition:"color .15s" }}
+              >
                 {l}
               </div>
             ))}
@@ -119,9 +118,9 @@ export const WebFooter = ({ onNav, showToast }) => (
       </div>
 
       {/* Bottom bar */}
-      <div className="flex items-center justify-between pt-8" style={{ borderTop:"1px solid rgba(255,255,255,0.07)" }}>
-        <p style={{ fontSize:13, color:"rgba(255,255,255,0.22)" }}>© 2026 SerenityDecoded. All rights reserved.</p>
-        <p style={{ fontSize:13, color:"rgba(255,255,255,0.22)" }}>Your data is never sold. Ever.</p>
+      <div className="flex items-center justify-center pt-8" style={{ borderTop:"1px solid rgba(255,255,255,0.07)" }}>
+        <p className="text-white" style={{ fontSize:13 }}>© 2026 SerenityDecoded. All rights reserved.</p>
+       
       </div>
     </div>
   </footer>

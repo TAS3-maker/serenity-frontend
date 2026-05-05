@@ -6,9 +6,11 @@ import appstore from "../assets/appstore.png";
 import googleplay from "../assets/googleplay.png";
 
 
-export default function DecodingSection() {
+export default function DecodingSection({bg="#F3F5F4"}) {
   return (
-    <section className="bg-[#F3F5F4] py-16 px-4 font-jost">
+    <section className=" py-16 px-4 font-jost"
+      style={{ backgroundColor: bg }}
+    >
       <div className="w-full max-w-[1130px] mx-auto grid md:grid-cols-2 gap-10 items-center">
         
         {/* Left */}
@@ -21,11 +23,11 @@ export default function DecodingSection() {
             Decoding <span className="text-[#0D7377]">Money Serenity™</span>
           </h2>
 
-          <p className="text-[#898989] mt-4 text-[22px] font-normal w-full max-w-xl">
+          <div className="text-[#898989] mt-4 text-[22px] font-normal w-full max-w-xl">
             <p className="mb-2">The book that built the framework.</p> 
             <p>Most books about money tell you what to do. Decoding Money Serenity™ tells you why you're doing what
              you're already doing — and how to change it at the level where it actually lives: your psychology.</p>
-          </p>
+          </div>
 
           {/* QR + Buttons */}
           <div className="flex items-center gap-4 mt-6">
