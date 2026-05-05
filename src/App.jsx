@@ -112,7 +112,7 @@ const AdminRoute = () => {
   setAuthed(false);
 
 
-  window.location.href = "/admin/login";
+  window.location.href = "/";
 };
   return (
     <RequireAuth>

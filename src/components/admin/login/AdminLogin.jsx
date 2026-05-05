@@ -32,9 +32,7 @@ const navigate=useNavigate()
       const data = await api.auth.adminLogin(email.trim(), pw);
       const token = data.token || data.accessToken;
       if (!token) throw new Error(data.message || "Login failed");
-      // The backend has set an httpOnly cookie. We also keep the token
-      // in-memory as a fallback for cookie-blocked environments — but never
-      // persist it to sessionStorage / localStorage (XSS-safe).
+   
       api.setToken(token);
       console.log("token",token);
       

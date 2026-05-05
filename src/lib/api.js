@@ -8,7 +8,7 @@
  *   const { data: users } = await api.users.list({ page: 1, perPage: 10 });
  */
 
-const BASE_URL = import.meta.env.VITE_API_URL || import.meta.env.REACT_APP_BACKEND_URL || '';
+const BASE_URL = "http://localhost:5001"
 
 // ── Token store ───────────────────────────────────────────────
 // SECURITY NOTE

@@ -6,6 +6,13 @@ import profileBox1 from "../../assets/profileBox1.png"
 import profileBox2 from "../../assets/profileBox2.png"
 import profileBox3 from "../../assets/profileBox3.png"
 import IKISDWImg from "../../assets/IKISDW.png"
+import Vector1 from "../../assets/Vector1.png"
+import Vector2 from "../../assets/Vector2.png"
+import Vector3 from "../../assets/Vector3.png"
+import Vector4 from "../../assets/Vector4.png"
+import bookImg from "../../assets/book.png"
+import GroupNewsLetter from "../../assets/GroupNewsLetter.png"
+import DecodingSection from "./howitwork/Decoding";
 // Map API accent names → design-token colors so admins can edit copy without
 // hard-coding hex values. Anything unknown falls back to teal.
 const ACCENT = {
@@ -44,9 +51,9 @@ const Hero = ({ showToast }) => {
 
           {/* Copy */}
           <div className="animate-fade-up">
-            <h1 className="font-jost font-bold leading-[1.06] tracking-[-2px]  mb-6 text-[40px] gap-8 [word-spacing:6px] " >
+            <h1 className="font-jost font-bold leading-[1.06] tracking-[-2px]   mb-6 text-[40px] gap-8 [word-spacing:6px] " >
               Your money stress isn't <br />
-              <span className="text-[var(--teal)]  relative">
+              <span className="text-[var(--teal)] font-jost leading-[1.06] relative text-[40px] tracking-[-2px] gap-8  [word-spacing:6px]">
                 about the numbers.It's about your mind .
               </span>
             </h1>
@@ -178,11 +185,11 @@ const Profiles = () => (
       <h1 className="text-[40px] font-bold ">
         Three ways to decode the mind.
       </h1>
-      <h2 className="text-[40px] font-bold font-jost  text-[var(--teal)] mb-6">
+      <h2 className="text-[35px] font-bold font-jost  text-[var(--teal)] mb-4">
         One connected system.
       </h2>
 
-      <p className="text-md text-[var(--textMuted)] max-w-[700px] mx-auto mb-10">
+      <p className="text-gray-500  max-w-4xl text-[20px]  mx-auto font-jost break-words mb-10">
         Every piece is complete on its own. Together, they create something no single app,
         community, book, or chatbot can — a complete behavioural change ecosystem.
       </p>
@@ -239,16 +246,15 @@ const DEFAULT_STEPS = [
   { n:"03", title:"Complete Daily Missions",  desc:"3–5 minutes each. Exercises from CBT, ACT, and behavioral economics. Designed to fit around your life." },
   { n:"04", title:"Track Your Relief Score",  desc:"Watch your Money Relief Score climb in real time — the only metric that captures how money actually feels." },
 ];
-
 const Process = ({ profiles = [] }) => (
   <section
-    className="py-12 text-center"
-    style={{ background: "rgba(243, 245, 244, 1)" }}
+    className="py-10 text-center"
+    style={{ background: "rgba(243,245,244,1)" }}
   >
     <div className="web-container">
 
       {/* Top intro */}
-      <p className="text-sm  mb-2 text-[rgba(13,115,119,1)]">
+      <p className="text-sm  font-jost font-semibold text-[rgba(13,115,119,1)]">
         Which pattern do you recognise in yourself?
       </p>
 
@@ -256,11 +262,11 @@ const Process = ({ profiles = [] }) => (
         Financial stress isn’t one thing.
       </h2>
 
-      <h3 className="text-[40px] font-bold font-jost text-[rgba(13,115,119,1)] mb-6">
+      <h3 className="text-[35px] font-bold font-jost text-[rgba(13,115,119,1)] mb-4">
         It’s one of three.
       </h3>
 
-      <p className="text-sm text-[var(--textMuted)] max-w-[720px] mx-auto mb-12 leading-[1.7]">
+      <p className="text-gray-500  max-w-3xl text-[20px]  mx-auto font-jost break-words mb-4">
         The SerenityAligned framework identifies three deeply wired psychological
         responses to money. All of them make sense. None of them have to be permanent.
       </p>
@@ -312,7 +318,7 @@ const DEFAULT_QUOTES = [
 const IKISDW=({showToast})=>{
   return (
   <section
-    className="  text-center py-12"
+    className="  text-center py-12 bg-white"
  
   >
     <div className="web-container">
@@ -329,14 +335,14 @@ const IKISDW=({showToast})=>{
               </span>
       </h1>
 
-      <p className="text-sm text-gray-500  max-w-[720px] mx-auto mb-12 ">
+      <p className="text-gray-500 text-[20px]  mx-auto mt-5 font-jost [word-spacing:1px] break-words mb-12">
        The SerenityAligned™ ecosystem is built around a single progression: Recognition → Interruption →
 Integration. Three stages. Three products. One outcome.
 
       </p>
 
-    <img src={IKISDWImg} alt="" className="w-full h-full object-cover" srcset="" />
-   <p className="text-md text-gray-400  max-w-[720px] mx-auto mb-4  mt-4">
+    <img src={IKISDWImg} alt="" className="w-full h-full object-cover"  />
+   <p className="text-gray-500  max-w-2xl text-[20px]  mx-auto font-jost [word-spacing:1px] break-words mb-4  mt-4">
 This isn't a three-step process that ends. It's a practice that compounds. Every day you show up, the pattern
 shifts a little more.
 
@@ -358,200 +364,275 @@ shifts a little more.
 
 
 
-
-
-
-
-
-
-
-const Testimonials = ({ quotes = DEFAULT_QUOTES, stats }) => {
-  const tiles = [
-    [stats?.totalUsers ? fmt(stats.totalUsers) : "1,284", "users enrolled"],
-    [`${stats?.relievedPct ?? 92}%`,                       "report less financial dread"],
-    [String(stats?.rating ?? 4.9),                         "average rating"],
-    [stats?.daysToRelief || "7 days",                      "to measurable relief"],
+const AaravSection = () => {
+  const cards = [
+    {
+      title: "Knows your pattern before you explain it",
+      desc: "Once you’ve completed the Financial Calm Assessment, Aarav knows your profile. The Avoider gets different responses than the Anxious Manager. Silence gets a different kind of presence than anxiety does. One framework. Personalised intelligence.",
+      icon: "🧠",
+      img:Vector1
+    },
+    {
+      title: "Available at 2am when the anxiety doesn’t sleep",
+      desc: "Financial anxiety doesn’t wait for office hours. Aarav is available around the clock — not to give advice, but to help you think, feel, and name what’s actually happening. The kind of conversation that moves something.",
+      icon: "⏱️",
+      img:Vector2
+    },
+    {
+      title: "Never tells you what to do with your money",
+      desc: "Aarav is not a financial advisor and doesn’t pretend to be. It works with your psychology — your patterns, your feelings, your blockers — without judgment, without a script, and without a sales agenda. That’s the difference.",
+      icon: "📖",
+      img:Vector3
+    },
+    {
+      title: "Speaks the language of the framework fluently.",
+      desc: "The Income-Happiness Gap. The Silence Tax. The Behavioural Avoidance Spectrum. Recognition–Interruption–Integration. Aarav understands these not as terms but as lived experiences — and uses them to meet you where you actually are.",
+      icon: "🌐",
+      img:Vector4
+    },
   ];
+
   return (
-    <Sec>
-      <Heading tag="Real results" h="What changes in 7 days" />
-      <div className="grid grid-cols-3 gap-6 mb-14">
-        {quotes.map((t) => (
-          <div key={t.name} className="rounded-2xl p-7 flex flex-col" style={{ background: "var(--bgCard)", border: "1px solid var(--border)" }}>
-            <Stars />
-            <p className="font-serif italic text-[17px] leading-[1.8] text-[var(--text)] flex-1 my-5">"{t.q}"</p>
-            <div className="flex items-center gap-3 pt-5 border-t border-[var(--border)]">
-              <div className="w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold text-white flex-shrink-0"
-                style={{ background: `linear-gradient(135deg,${C.teal},${C.green})` }}>{t.name[0]}</div>
-              <div>
-                <div className="font-semibold text-sm text-[var(--text)]">{t.name}</div>
-                <div className="text-xs text-[var(--textMuted)]">{t.role}</div>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-      <div className="rounded-3xl p-10 grid grid-cols-4 gap-8 text-center"
-        style={{ background: `linear-gradient(135deg,${C.teal} 0%,${C.green} 100%)` }}
-        data-testid="home-stats-band">
-        {tiles.map(([v, l]) => (
-          <div key={l}>
-            <div className="font-display font-black text-white mb-2 leading-none" style={{ fontSize: 38 }}>{v}</div>
-            <div className="text-sm text-white/60">{l}</div>
-          </div>
-        ))}
-      </div>
-    </Sec>
-  );
-};
+    <section className="py-20 bg-[#f4f6f6] text-center">
+      <div className="max-w-5xl mx-auto px-4">
 
-// ─── CTA ────────────────────────────────────────────────────────
-const CTA = ({ showToast }) => {
-  const [email, setEmail] = useState("");
-  const submit = () => { if (!email.includes("@")) return; showToast("You're on the list!"); setEmail(""); };
-  return (
-    <Sec bg="var(--bgMuted)">
-      <div className="relative rounded-[32px] overflow-hidden px-16 py-20 text-center"
-        style={{ background: `linear-gradient(135deg,${C.teal} 0%,${C.green} 100%)` }}>
-        <div className="absolute inset-0 pointer-events-none"
-          style={{ backgroundImage: "repeating-linear-gradient(45deg,rgba(255,255,255,0.03) 0px,rgba(255,255,255,0.03) 1px,transparent 1px,transparent 44px)" }} />
-        <div className="relative z-10 max-w-[580px] mx-auto">
-          <div className="inline-flex items-center px-4 py-1.5 rounded-full text-[11px] font-bold tracking-widest uppercase mb-6"
-            style={{ background: "rgba(255,255,255,0.12)", color: "#fff", border: "1px solid rgba(255,255,255,0.25)" }}>
-            Start today — completely free
-          </div>
-          <h2 className="font-display font-bold text-white mb-5 leading-[1.1] tracking-[-1.5px]" style={{ fontSize: 48 }}>
-            Ready to change<br />how money feels?
-          </h2>
-          <p className="text-lg text-white/70 mb-10 leading-[1.75]">No budgeting. No tracking. Just the behavioral work that permanently changes your relationship with money.</p>
-          <div className="flex gap-3 max-w-[460px] mx-auto mb-5">
-            <input type="email" value={email} onChange={e => setEmail(e.target.value)} onKeyDown={e => e.key === "Enter" && submit()}
-              placeholder="your@email.com" className="flex-1 h-[52px] rounded-xl px-5 text-[15px] font-sans border-none outline-none"
-              style={{ background: "rgba(255,255,255,0.15)", color: "#fff", border: "1.5px solid rgba(255,255,255,0.3)" }} />
-            <button onClick={submit} className="w-btn-white flex-shrink-0">Get started →</button>
-          </div>
-          <p className="text-[13px] text-white/40">Free forever · No credit card · Unsubscribe any time</p>
-        </div>
-      </div>
-    </Sec>
-  );
-};
+        {/* Top small text */}
+        <p className="text-sm font-semibold text-teal-700 mb-3">
+          Powered by Aarav The Serenity Genie™
+        </p>
 
-
-// ─── App Download ───────────────────────────────────────────────
-const AppDownload = ({ showToast }) => (
-  <Sec bg="var(--bg)">
-    <div className="grid grid-cols-2 gap-20 items-center">
-      {/* Left copy */}
-      <div>
-        <div className="web-tag">Mobile App</div>
-        <h2 className="font-display font-bold text-[var(--text)] mb-5 leading-[1.1] tracking-[-1px]" style={{ fontSize: 44 }}>
-          Your daily missions,<br />always in your pocket.
+        {/* Main heading */}
+        <h1 className="text-4xl font-bold leading-tight">
+          An AI that understands your mind,
+        </h1>
+        <h2 className="text-4xl font-bold text-teal-700 mb-6">
+          not just your money.
         </h2>
-        <p className="text-[17px] text-[var(--textMuted)] leading-[1.8] mb-8 max-w-[440px]">
-          The full SerenityDecoded experience — offline access, morning reminders, streak tracking, and your Money Relief Score — all in one beautifully calm app.
+
+        {/* Description */}
+        <p className="text-gray-500 text-[20px]  mx-auto mt-5 font-jost [word-spacing:2px]">
+          Aarav isn’t a financial chatbot. It’s a psychologically intelligent companion built
+          specifically on the SerenityDecoded™ framework — the first AI of its kind trained
+          to understand the three financial stress profiles and meet each one differently.
         </p>
-        <div className="flex gap-3 mb-10 flex-wrap">
-          {[
-            { label:"App Store", sub:"iOS 15+", path:"M12 2.5c1.5 0 3 .8 3.9 2C17.6 2.5 20 4 20 6.5c0 5-4 9-8 11.5C8 15.5 4 11.5 4 6.5 4 4 6.4 2.5 8.1 4.5 9 3.3 10.5 2.5 12 2.5z" },
-            { label:"Google Play", sub:"Android 8+", path:"M3 20.5v-17l17 8.5-17 8.5z" },
-          ].map(({ label, sub, path }) => (
-            <button key={label} onClick={() => showToast(`${label} — coming soon`)}
-              className="flex items-center gap-3.5 px-5 py-3.5 rounded-2xl border transition-all hover:-translate-y-0.5 hover:shadow-lg"
-              style={{ background:"var(--bgCard)", borderColor:"var(--border)", minWidth:180 }}>
-              <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-                style={{ background:"var(--text)" }}>
-                <svg viewBox="0 0 24 24" fill="var(--bgCard)" width="20" height="20">
-                  <path d={path}/>
-                </svg>
+
+        {/* Cards grid */}
+        <div className="grid md:mt-10 md:grid-cols-2 gap-8">
+          {cards.map((c, i) => (
+            <div
+              key={i}
+              className="relative bg-white rounded-xl shadow-md px-6 pt-12 pb-6 text-center"
+            >
+              {/* Floating icon */}
+              <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-16 h-16 rounded-full bg-teal-700 flex items-center justify-center text-white text-xl shadow-lg">
+       <img src={c.img} className="p-3 flex justify-center items-center" alt="" />
               </div>
-              <div className="text-left">
-                <div className="text-[10px] font-medium text-[var(--textMuted)] leading-none mb-0.5">Download on the</div>
-                <div className="font-display font-bold text-[15px] text-[var(--text)] leading-none">{label}</div>
-                <div className="text-[10px] text-[var(--textFaint)] mt-0.5">{sub}</div>
-              </div>
-            </button>
-          ))}
-        </div>
-        {/* Feature list */}
-        <div className="grid grid-cols-2 gap-3">
-          {["Offline mission access","Morning reminders","Streak & score tracking","Stress profile insights","Dark mode support","Face ID unlock"].map((f) => (
-            <div key={f} className="flex items-center gap-2.5 text-[14px] text-[var(--textMuted)]">
-              <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
-                style={{ background:"var(--tealBg)", border:"1px solid var(--tealBorder)" }}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="var(--teal)" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" width="11" height="11">
-                  <path d="M20 6L9 17l-5-5"/>
-                </svg>
-              </div>
-              {f}
+
+              <h3 className="font-semibold mb-2 text-sm">
+                {c.title}
+              </h3>
+
+              <p className="text-gray-500 text-xs leading-relaxed">
+                {c.desc}
+              </p>
             </div>
           ))}
         </div>
+
+        {/* CTA */}
+        <button className="mt-12 bg-teal-700 text-white px-6 py-2 rounded-full text-sm shadow-md hover:opacity-90">
+          Try Aarav Free
+        </button>
+      </div>
+    </section>
+  );
+};
+
+
+
+const Book=()=>{
+return (
+ <div className="w-full max-w-[1130px] mx-auto grid md:grid-cols-2 gap-10 pt-10 items-center">
+        
+           <div className="flex justify-center">
+          <img src={bookImg} alt="" className="object-cover max-w-sm" />
+        </div>
+
+
+
+        <div>
+        
+
+          <h2 className="text-5xl font-bold text-[#000000]">
+            About <span className="text-[#0D7377]">the book</span>
+          </h2>
+
+          <p className="text-[#898989] mt-4 text-md w-full max-w-lg">
+          Most financial advice ignores the most important variable: you. Decoding Money Serenity is a psychology-first guide to understanding why money feels the way it does — and what to do about it.
+          </p>
+<p className="text-gray-500 mt-2 text-md w-full max-w-lg ">
+
+Built on three proprietary financial stress profiles — The Avoider, The Anxious Manager, and The Silent Stressor — this book gives you a map of your own pattern, not a list of rules to follow.
+</p>
+    
+<p className="text-[#898989] mt-2 text-md w-full max-w-lg">
+
+  The result isn't wealth. It's financial calm.
+</p>
+
+        </div>
+
+        {/* Right */}
+   
       </div>
 
-      {/* Right — QR codes */}
-      <div className="flex flex-col gap-6">
-        {/* App preview mockup */}
-        <div className="rounded-3xl p-8 flex items-center gap-8"
-          style={{ background:`linear-gradient(135deg, var(--tealBg), var(--bgMuted))`, border:"1px solid var(--tealBorder)" }}>
-          {/* Phone frame */}
-          <div className="relative flex-shrink-0">
-            <div className="w-[130px] h-[220px] rounded-[26px] flex flex-col overflow-hidden"
-              style={{ background:"var(--bgCard)", border:"2px solid var(--border)", boxShadow:"0 20px 60px rgba(13,115,119,0.15)" }}>
-              {/* Status bar */}
-              <div className="h-7 flex items-center justify-between px-3 flex-shrink-0"
-                style={{ background:"var(--teal)" }}>
-                <div className="text-[7px] text-white/70 font-semibold">9:41</div>
-                <div className="flex gap-1">
-                  {[4,3,2].map(w=><div key={w} className="rounded-sm bg-white/70" style={{width:w,height:6}}/>)}
+
+
+)
+
+
+
+
+
+}
+
+
+
+const CommunitySection = () => {
+  const testimonials = [
+    {
+      text: `"I opened my banking app and actually stayed. I'd been avoiding it for six months. That was Day 3." Attribution: Early user`,
+      name: "The Avoider",
+      initials: "TA",
+    },
+    {
+      text: `"I didn’t realise that checking eight times a day wasn’t being responsible. The framework named what was actually happening."`,
+      name: "The Anxious Manager",
+      initials: "AM",
+    },
+    {
+      text: `"I’d been carrying this alone for years. I didn’t know there was a name for it, or a way through it." Attribution: Early user`,
+      name: "The Silent Stressor",
+      initials: "PR",
+    },
+  ];
+
+  return (
+    <section className="bg-[#f4f6f6] py-20 text-center">
+      <div className="max-w-6xl mx-auto px-4">
+
+        <p className="text-xs font-semibold text-teal-700 mb-3 tracking-wide">
+          FROM OUR COMMUNITY
+        </p>
+
+        <h2 className="text-3xl md:text-4xl leading-[1.06] [word-spacing:4px] font-bold">
+          What shifts first isn’t the bank balance.
+        </h2>
+        <h3 className="text-3xl md:text-4xl font-bold [word-spacing:4px] text-teal-700 mb-12">
+          It’s the relationship with it.
+        </h3>
+
+        <div className="grid md:grid-cols-3 gap-6">
+          {testimonials.map((item, i) => (
+            <div
+              key={i}
+              className="bg-white rounded-xl shadow-md p-6 text-left"
+            >
+              <div className="text-yellow-500 mb-3 text-sm">★★★★★</div>
+
+              <p className="text-sm text-gray-600 leading-relaxed mb-6">
+                {item.text}
+              </p>
+
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-full bg-teal-700 text-white flex items-center justify-center text-xs">
+                  {item.initials}
                 </div>
-              </div>
-              {/* Screen content */}
-              <div className="flex-1 p-2.5" style={{ background:"var(--bg)" }}>
-                <div className="font-display font-bold text-[8px] text-[var(--text)] mb-1.5">Day 3 · The Avoidance Map</div>
-                <div className="h-1 rounded-full mb-2 overflow-hidden bg-[var(--bgMuted)]">
-                  <div className="h-full rounded-full" style={{ width:"43%", background:`linear-gradient(90deg,#0D7377,#1E7145)` }}/>
-                </div>
-                <div className="text-[6px] text-[var(--textMuted)] leading-[1.5] mb-2.5">Today we map exactly what you avoid — when it happens and what it costs.</div>
-                <div className="h-12 rounded-lg flex items-center justify-center text-[7px] font-bold text-white"
-                  style={{ background:`linear-gradient(135deg,#0D7377,#1E7145)` }}>Begin mission →</div>
-                <div className="mt-2 p-2 rounded-lg" style={{ background:"var(--tealBg)", border:"1px solid var(--tealBorder)" }}>
-                  <div className="text-[6px] text-[var(--textMuted)]">Relief Score</div>
-                  <div className="font-display font-bold text-[12px]" style={{ color:"var(--teal)" }}>62<span className="text-[7px] font-normal">/100</span></div>
-                </div>
+                <span className="text-sm text-teal-700 font-medium">
+                  {item.name}
+                </span>
               </div>
             </div>
-            {/* Floating badge */}
-            <div className="absolute -top-3 -right-4 px-2.5 py-1.5 rounded-xl text-[10px] font-bold"
-              style={{ background:"var(--bgCard)", color:"var(--green)", border:"1px solid var(--border)", boxShadow:"var(--shadow)" }}>
-              7-day streak
-            </div>
+          ))}
+        </div>
+
+      </div>
+    </section>
+  );
+};
+
+
+
+const NewsletterSection = () => {
+  return (
+    <section className="bg-[#f4f6f6] py-10">
+      <div className="max-w-6xl mx-auto px-4">
+
+        <div className="text-center ">
+          <h1 className="text-3xl md:text-5xl font-jost  font-bold">
+            The psychology of financial calm,
+          </h1>
+          <h2 className="text-3xl md:text-5xl font-jost  font-bold  text-teal-700">
+            delivered weekly.
+          </h2>
+
+          <p className="text-gray-500 text-[20px] mt-5 p-2 font-jost w-full max-w-full [word-spacing:1px]">
+            One email. Every week. Psychology-backed insights on financial stress,
+            behaviour patterns, and what it actually takes to feel calmer about money.
+            No noise. No pitch. Just the framework, applied.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-10 mt-4 items-center">
+
+          <div className="flex justify-center">
+            <img
+              src={GroupNewsLetter} 
+              alt="newsletter"
+              className="w-[320px] md:w-[380px]"
+            />
           </div>
 
-          {/* QR codes */}
-          <div className="flex-1 space-y-4">
-            {[
-              { label:"iOS App Store", file:"/assets/qr-ios.svg" },
-              { label:"Google Play", file:"/assets/qr-android.svg" },
-            ].map(({ label, file }) => (
-              <div key={label} className="flex items-center gap-3">
-                <img src={file} alt={`QR — ${label}`} className="w-14 h-14 rounded-xl flex-shrink-0"
-                  style={{ border:"1px solid var(--border)" }} />
-                <div>
-                  <div className="font-semibold text-[12px] text-[var(--text)]">{label}</div>
-                  <div className="text-[11px] text-[var(--textMuted)]">Scan to download</div>
-                </div>
+          {/* FORM */}
+          <div className="bg-white p-6 rounded-xl shadow-md">
+            <form className="space-y-4">
+
+              <div>
+                <label className="text-xs text-gray-500">First Name</label>
+                <input className="w-full mt-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-700" />
               </div>
-            ))}
+
+              <div>
+                <label className="text-xs text-gray-500">Last Name</label>
+                <input className="w-full mt-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-700" />
+              </div>
+
+              <div>
+                <label className="text-xs text-gray-500">Email Address</label>
+                <input type="email" className="w-full mt-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-700" />
+              </div>
+
+              <div>
+                <label className="text-xs text-gray-500">Phone Number</label>
+                <input className="w-full mt-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-700" />
+              </div>
+
+              <button className="w-40 bg-teal-700 text-white py-2 rounded-md hover:opacity-90">
+                Submit
+              </button>
+
+            </form>
           </div>
         </div>
-        <p className="text-center text-[12px] text-[var(--textFaint)]">
-          Coming soon to App Store and Google Play · <button className="underline bg-transparent border-none cursor-pointer text-[var(--textMuted)] font-sans text-[12px]" onClick={() => showToast("Notified!")}>Get notified</button>
-        </p>
+
       </div>
-    </div>
-  </Sec>
-);
+    </section>
+  );
+};
+
+
+
+
 
 export const WebHome = ({ onNav, showToast }) => {
   // Fetch admin-editable site content + public stats in parallel.
@@ -576,9 +657,11 @@ export const WebHome = ({ onNav, showToast }) => {
       <Profiles profiles={site?.profiles} />
   <Process profiles={site?.profiles} />
  <IKISDW showToast={showToast} />
-      <Testimonials quotes={site?.testimonials} stats={stats} />
-      <AppDownload showToast={showToast} />
-      <CTA showToast={showToast} />
+ <AaravSection/>
+ <DecodingSection bg="#ffffff"/>
+ <Book/>
+   <CommunitySection/> 
+     <NewsletterSection/>
     </>
   );
 };
