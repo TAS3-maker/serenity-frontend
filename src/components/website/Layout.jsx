@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useTheme } from "../../ThemeContext";
 import { ThemeToggle } from "../ui/index";
 import { C } from "../../tokens";
-import finalLogo from "../../../public/assets/finalLogo.png"
+import finalLogo from "../../assets/finalLogo.png"
 export const WebNav = ({ active, onNav }) => {
   const [scrolled, setScrolled] = useState(false);
   const { theme, toggle } = useTheme();
@@ -64,7 +64,7 @@ export const WebNav = ({ active, onNav }) => {
       {/* Right side */}
       <div className="flex items-center justify-end">
         <span
-          onClick={() => onNav("signin")}
+          onClick={() => onNav("admin")}
           className="cursor-pointer font-semibold text-[14px]"
           style={{ color: "var(--text)" }}
         >

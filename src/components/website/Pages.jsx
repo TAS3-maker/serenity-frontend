@@ -91,23 +91,23 @@ const ACCENT_COLOR = { teal: C.teal, gold: C.gold, navy: C.navy, green: C.green 
 const accentColor = (k) => ACCENT_COLOR[k] || C.teal;
 
 export const WebAbout = ({ showToast }) => {
-  const [team, setTeam]             = useState(DEFAULT_TEAM);
-  const [principles, setPrinciples] = useState(DEFAULT_PRINCIPLES);
-  const [stats, setStats]           = useState(null);
+  // const [team, setTeam]             = useState(DEFAULT_TEAM);
+  // const [principles, setPrinciples] = useState(DEFAULT_PRINCIPLES);
+  // const [stats, setStats]           = useState(null);
 
-  useEffect(() => {
-    let cancelled = false;
-    Promise.all([
-      api.content.site().catch(() => null),
-      api.content.siteStats().catch(() => null),
-    ]).then(([s, st]) => {
-      if (cancelled) return;
-      if (s?.team?.length)       setTeam(s.team);
-      if (s?.principles?.length) setPrinciples(s.principles);
-      if (st)                    setStats(st);
-    });
-    return () => { cancelled = true; };
-  }, []);
+  // useEffect(() => {
+  //   let cancelled = false;
+  //   Promise.all([
+  //     api.content.site().catch(() => null),
+  //     api.content.siteStats().catch(() => null),
+  //   ]).then(([s, st]) => {
+  //     if (cancelled) return;
+  //     if (s?.team?.length)       setTeam(s.team);
+  //     if (s?.principles?.length) setPrinciples(s.principles);
+  //     if (st)                    setStats(st);
+  //   });
+  //   return () => { cancelled = true; };
+  // }, []);
 
   return (
   <div>
@@ -116,7 +116,7 @@ export const WebAbout = ({ showToast }) => {
 <AboutUsLayout/>
 
 
-    <Hero tag="Our story" align="left"
+    {/* <Hero tag="Our story" align="left"
       h={<>Money distress is a<br />mental health issue.<br />We built the tool for it.</>}
       sub="SerenityDecoded exists because every financial product we found ignored the emotional reality of money. The advice was correct. The delivery was wrong." />
 
@@ -178,7 +178,7 @@ export const WebAbout = ({ showToast }) => {
           </div>
         </div>
       </div>
-    </Sec>
+    </Sec> */}
   </div>
   );
 };

@@ -64,6 +64,10 @@ const auth = {
   adminMe:        ()                         => get('/api/auth/admin/me'),
   logout:         ()                         => post('/api/auth/logout'),
   changePassword: (currentPassword, newPassword) => post('/api/auth/user/change-password', { currentPassword, newPassword }),
+  forgetPassword: (email) => post('/api/auth/forgot-password', { email }),
+  verifyEmailOtp: (email, otp) =>post('/api/auth/verify-reset', { email, otp }),
+  resetPassword: (email, resetToken, newPassword) =>post('/api/auth/reset-password', { email, resetToken, newPassword }),
+
 };
 
 // ── Users ─────────────────────────────────────────────────────

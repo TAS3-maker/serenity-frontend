@@ -13,6 +13,9 @@ import { AdminTopbar }  from "./layout/Topbar";
 
 // Auth + profile + notifications
 import { AdminLogin }     from "./login/AdminLogin";
+import { ForgetPassword }     from "./login/ForgetPassword";
+import { ResetPassword }     from "./login/ResetPassword";
+import { NewPassword }     from "./login/NewPassword";
 import { AProfile }       from "./profile/Profile";
 import { ANotifications } from "./notifications/Notifications";
 
@@ -85,7 +88,7 @@ export const AdminPanel = ({ onLogout }) => {
       case "admin_manage":  return <AAdminManage {...p} />;
       case "email_cfg":     return <AEmailConfig {...p} />;
       case "stripe":        return <AStripeConfig {...p} />;
-      case "general":       return <AGeneral {...p} />;
+      case "settings":       return <AGeneral {...p} />;
       case "faq":           return <AFaqManager {...p} />;
       case "qr":            return <AQRManager {...p} />;
       case "page_perms":    return <APagePermissions {...p} />;
@@ -98,14 +101,7 @@ export const AdminPanel = ({ onLogout }) => {
       {/* Toast */}
       <div className={`toast${toast.show?" show":""}${toast.type==="error"?" err":""}`}>{toast.msg}</div>
 
-      {/* Topbar */}
-      <AdminTopbar
-        sec={sec}
-        secLabels={SEC_LABELS}
-        setSec={setSec}
-        mobileNav={mobileNav}
-        setMobileNav={setMobileNav}
-      />
+
 
       {/* Body */}
       <div className="flex flex-1 overflow-hidden">
@@ -136,3 +132,6 @@ export const AdminPanel = ({ onLogout }) => {
 
 // Re-export AdminLogin so App.jsx import still works
 export { AdminLogin } from "./login/AdminLogin";
+export { ForgetPassword } from "./login/ForgetPassword";
+export { ResetPassword } from "./login/ResetPassword";
+export { NewPassword } from "./login/NewPassword";

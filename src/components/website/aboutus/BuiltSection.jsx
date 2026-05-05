@@ -3,7 +3,7 @@ import thinkperson from "../assets/thinkperson.png";
 
 const BuiltSection = () => {
   return (
-    <section className="bg-gray-100 py-14 px-4">
+    <section className="bg-white py-14 px-4">
       <div className="max-w-5xl mx-auto flex flex-col gap-10 items-center">
          {/* Heading */}
          <h2 className="text-2xl md:text-5xl font-bold mb-6">
