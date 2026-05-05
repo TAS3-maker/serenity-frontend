@@ -20,6 +20,7 @@ export const WebNav = ({ active, onNav }) => {
     { l: "Programs", n: "programs" },
     { l: "Blog", n: "blog" },
     { l: "About", n: "about" },
+
   ];
 
   return (
@@ -101,9 +102,9 @@ export const WebFooter = ({ onNav, showToast }) => (
 
         {/* Link columns */}
         {[
-          { h:"Product", links:[{l:"How It Works",n:"howitworks"},{l:"Programs",n:"programs"},{l:"Assessment",n:"home"},{l:"The Book",n:null}] },
+          { h:"Product", links:[{l:"How It Works",n:"howitworks"},{l:"Programs",n:"programs"},{l:"Assessment",n:"home"},{l:"The Book",n:"book"}] },
           { h:"Company", links:[{l:"About",n:"about"},{l:"Blog",n:"blog"},{l:"Careers",n:null},{l:"Press",n:null}] },
-          { h:"Support",  links:[{l:"Help Center",n:null},{l:"Privacy Policy",n:null},{l:"Terms",n:null},{l:"Contact",n:null}] },
+          { h:"Support",  links:[{l:"Help Center",n:null},{l:"Privacy Policy",n:null},{l:"Terms",n:null},{l:"Contact",n:"contact"}] },
         ].map(({h,links})=>(
           <div key={h}>
             <div style={{ fontSize:11, fontWeight:700, color:"rgba(255,255,255,0.28)", letterSpacing:"1.5px", textTransform:"uppercase", marginBottom:18 }}>{h}</div>

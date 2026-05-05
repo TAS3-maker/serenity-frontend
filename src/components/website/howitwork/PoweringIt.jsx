@@ -1,5 +1,5 @@
-import illustration from "./assets/piggybank.png";
-import checkicon from './assets/checkicon.svg';
+import illustration from "../assets/piggybank.png";
+import checkicon from '../assets/checkicon.svg';
 
 const items = [
   {
@@ -31,30 +31,36 @@ const items = [
 
 export default function PoweringSection() {
   return (
-    <section className="bg-white py-16 px-4 font-jost">
-      <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-10 items-center">
+    <section className="bg-white py-8 md:py-12 lg:py-16 px-3 md:px-4 font-jost">
+      <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-4 md:gap-7 lg:gap-10 items-center">
         
         {/* Left */}
         <div className="">
-          <h2 className="text-5xl font-bold text-[#000000] ">
+          <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold text-[#000000] ">
             What’s <span className="text-[#0D7377]">Powering It</span>
           </h2>
 
-          <ul className="mt-6 space-y-4">
+          <ul className="mt-2 md:mt-4 lg:mt-6 space-y-4">
             {items.map((item, i) => (
               <li key={i} className="flex items-start gap-3 text-gray-700">
                 {/* <span className="text-teal-600 mt-1">✔</span> */}
                 <div className="w-[30px] h-[30px] p-1 flex items-center justify-center rounded-[4px] bg-[#0D7377] text-white mb-4">
                    <img src={item.icon} alt="" className="w-[22px] h-[22px] max-w-[22px]" />
                 </div>
-                <p className="text-[22px] text-[#000000] font-semibold">{item.title}<span className="font-normal text-[#898989]">{item.desc}</span></p>
+                <p className="text-[18px] md:text-[22px] text-[#000000] font-semibold">{item.title}<span className="font-normal text-[#898989]">{item.desc}</span></p>
               </li>
             ))}
           </ul>
 
-          <button className="mt-6 bg-[#0D7377] text-xl font-medium text-white px-5 py-2 rounded-lg">
+          {/* <button className="mt-6 bg-[#0D7377] text-xl font-medium text-white px-5 py-2 rounded-lg">
             Download Serenity Aligned™
-          </button>
+          </button> */}
+
+          <div className="flex justify-center md:justify-start">
+              <button className="my-4 md:my:6 bg-[#0D7377] text-xl font-medium text-white px-5 py-2 rounded-lg">
+              Download Serenity Aligned™
+              </button>
+          </div>
         </div>
 
         {/* Right Image */}

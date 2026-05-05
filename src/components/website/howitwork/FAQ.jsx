@@ -1,6 +1,6 @@
 import { useState } from "react";
-import arrowDown from "./assets/downarrow.svg";
-import arrowUp from "./assets/uparrow.svg";
+import arrowDown from "../assets/downarrow.svg";
+import arrowUp from "../assets/uparrow.svg";
 
 const faqs = [
   {
@@ -21,16 +21,16 @@ export default function FAQSection() {
   const [open, setOpen] = useState(0); // default sab close
 
   return (
-    <section className="bg-white py-16 px-4 font-jost">
+    <section className="bg-white py-10 md:py-16 px-3 md:px-4 font-jost">
       <div className="max-w-3xl mx-auto text-center">
         
-        <p className="text-xl font-medium text-[#0D7377]">COMMON QUESTIONS</p>
+        <p className="text-lg md:text-xl font-medium text-[#0D7377]">COMMON QUESTIONS</p>
 
-        <h2 className="text-5xl font-bold text-[#000000] mt-2">
+        <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold text-[#000000] mt-2">
           Answers before <span className="text-[#0D7377]">you begin.</span>
         </h2>
 
-        <div className="mt-8 space-y-4 text-left">
+        <div className="mt-6 md:mt-8 space-y-4 text-left">
           {faqs.map((item, i) => {
             const isOpen = open === i;
 
@@ -46,7 +46,7 @@ export default function FAQSection() {
                 {/* Question */}
                 <button
                   onClick={() => setOpen(isOpen ? null : i)}
-                  className="w-full flex font-semibold justify-between items-center px-5 py-4 text-2xl"
+                  className="w-full flex font-semibold justify-between items-center px-3 md:px-5 py-4 text-xl md:text-2xl"
                 >
                   {item.q}
 

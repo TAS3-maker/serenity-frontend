@@ -8,6 +8,8 @@ import { WebBlog } from "./components/website/Blog";
 import { WebCommunity } from "./components/community/index";
 import { AdminLogin, AdminPanel } from "./components/admin/AdminPanel";
 import { api } from "./lib/api";
+import WaitListLayout from "./components/website/waitlist/WaitListLayout";
+import ContactLayout from "./components/website/ContactUs/ContactLayout";
 
 // ─── Auth ──────────────────────────────────────────────────────
 // We avoid storing any auth-related data in sessionStorage / localStorage to
@@ -47,11 +49,11 @@ const WebsiteLayout = () => {
   const [toast, showToast] = useToast();
   const location = useLocation();
 
-  const pathMap = { "/how-it-works": "howitworks", "/programs": "programs", "/blog": "blog", "/about": "about", "/community": "community" };
+  const pathMap = { "/how-it-works": "howitworks", "/programs": "programs", "/blog": "blog", "/about": "about", "/community": "community", "/book":"book", "/contact":"contact" };
   const active = pathMap[location.pathname] || "home";
 
   const onNav = (key) => {
-    const routeMap = { home: "/", howitworks: "/how-it-works", programs: "/programs", blog: "/blog", about: "/about", admin: "/admin/login" };
+    const routeMap = { home: "/", howitworks: "/how-it-works", programs: "/programs", blog: "/blog", about: "/about", admin: "/admin/login", book:"/book", contact:"contact"};
     navigate(routeMap[key] || "/");
     if (scrollRef.current) scrollRef.current.scrollTop = 0;
   };
@@ -63,6 +65,9 @@ const WebsiteLayout = () => {
       case "blog":       return <WebBlog showToast={showToast} />;
       case "about":      return <WebAbout showToast={showToast} />;
       case "community":  return <WebCommunity showToast={showToast} />;
+      case "book":  return <WaitListLayout  />;
+      case "contact": return <ContactLayout />;
+
       default:           return <WebHome onNav={onNav} showToast={showToast} />;
     }
   };
@@ -133,11 +138,14 @@ export default function App() {
       <div className="fixed inset-0">
         <Routes>
           <Route path="/"               element={<WebsiteLayout />} />
+          {/* <Route path="/waiting-list"   element={<WebsiteLayout />} /> */}
           <Route path="/how-it-works"   element={<WebsiteLayout />} />
           <Route path="/programs"       element={<WebsiteLayout />} />
           <Route path="/blog"           element={<WebsiteLayout />} />
           <Route path="/about"          element={<WebsiteLayout />} />
-          <Route path="/community"       element={<CommunityRoute />} />
+          <Route path="/book"           element={<WebsiteLayout />} />
+          <Route path="/contact"        element={<WebsiteLayout />} />
+          <Route path="/community"      element={<CommunityRoute />} />
           <Route path="/admin/login"    element={<AdminLoginPage />} />
           <Route path="/admin"          element={<Navigate to="/admin/dashboard" replace />} />
           <Route path="/admin/:section" element={<AdminRoute />} />
