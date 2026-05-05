@@ -6,7 +6,7 @@ import { WebHome } from "./components/website/HomePage";
 import { WebHowItWorks, WebPrograms, WebAbout } from "./components/website/Pages";
 import { WebBlog } from "./components/website/Blog";
 import { WebCommunity } from "./components/community/index";
-import { AdminLogin, AdminPanel } from "./components/admin/AdminPanel";
+import { AdminLogin, AdminPanel,ForgetPassword,NewPassword,ResetPassword } from "./components/admin/AdminPanel";
 import { api } from "./lib/api";
 import WaitListLayout from "./components/website/waitlist/WaitListLayout";
 import ContactLayout from "./components/website/ContactUs/ContactLayout";
@@ -20,28 +20,34 @@ import ContactLayout from "./components/website/ContactUs/ContactLayout";
 // after navigation doesn't bounce back to /admin/login.
 let _adminAuthed = false;
 const setAuthed  = (v) => { _adminAuthed = !!v; };
-
 const RequireAuth = ({ children }) => {
   const location = useLocation();
-  const [phase, setPhase] = useState(_adminAuthed ? "ok" : "checking");
+  const [phase, setPhase] = useState("checking");
 
   useEffect(() => {
-    if (phase !== "checking") return undefined;
     let alive = true;
-    api.auth.adminMe()
-      .then(() => { if (alive) { _adminAuthed = true; setPhase("ok"); } })
-      .catch(() => { if (alive) setPhase("nope"); });
-    return () => { alive = false; };
-    // `api` is a stable module-level singleton; `_adminAuthed` is only mutated
-    // inside this effect; `setPhase` and `alive` are local to the effect body.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [phase]);
 
-  if (phase === "checking") return null;
-  if (phase === "nope")     return <Navigate to="/admin/login" state={{ from: location }} replace />;
+    api.auth.adminMe()
+      .then(() => {
+        if (alive) setPhase("ok");
+      })
+      .catch(() => {
+        if (alive) setPhase("nope");
+      });
+
+    return () => { alive = false; };
+  }, []);
+
+  // 🔥 IMPORTANT: never render children until verified
+  if (phase !== "ok") {
+    if (phase === "nope") {
+      return <Navigate to="/admin/login" state={{ from: location }} replace />;
+    }
+    return <div className="text-center mt-10">Loading...</div>;
+  }
+
   return children;
 };
-
 // ─── Website layout ────────────────────────────────────────────
 const WebsiteLayout = () => {
   const navigate = useNavigate();
@@ -102,15 +108,18 @@ const AdminLoginPage = () => {
 const AdminRoute = () => {
   const navigate = useNavigate();
   const handleLogout = async () => {
-    // Clear the cookie via the backend; if the request fails (offline, server
-    // restart, etc.) we still drop the in-memory state and bounce to /login —
-    // log the failure for visibility.
-    try { await api.auth.logout(); }
-    catch (err) { console.warn("[AdminRoute] logout request failed:", err); }
-    api.clearToken();
-    setAuthed(false);
-    navigate("/admin/login", { replace: true });
-  };
+  try {
+    await api.auth.logout();
+  } catch (err) {
+    console.warn("[AdminRoute] logout request failed:", err);
+  }
+
+  api.clearToken();
+  setAuthed(false);
+
+
+  window.location.href = "/";
+};
   return (
     <RequireAuth>
       <AdminPanel onLogout={handleLogout} />

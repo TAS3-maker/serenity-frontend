@@ -4,6 +4,7 @@ import Programsdecoding from "./Programsdecoding"
 import SerenityAlignedApp from "./SerenityAlignedApp"
 import Aarav from "./AaravSection"
 import SerenityCommunity from "./SerenityCommunity"
+import Decodingmoney from "./Decodingmoney"
 
 
 const Programslayout = () => {
@@ -13,6 +14,7 @@ const Programslayout = () => {
       <SerenityAlignedApp />
       <Aarav />
       <SerenityCommunity />
+      <Decodingmoney /> 
       <Programsdecoding />
     </div>
   )

@@ -8,7 +8,7 @@
  *   const { data: users } = await api.users.list({ page: 1, perPage: 10 });
  */
 
-const BASE_URL = import.meta.env.VITE_API_URL || import.meta.env.REACT_APP_BACKEND_URL || '';
+const BASE_URL = "http://localhost:5001"
 
 // ── Token store ───────────────────────────────────────────────
 // SECURITY NOTE
@@ -64,6 +64,10 @@ const auth = {
   adminMe:        ()                         => get('/api/auth/admin/me'),
   logout:         ()                         => post('/api/auth/logout'),
   changePassword: (currentPassword, newPassword) => post('/api/auth/user/change-password', { currentPassword, newPassword }),
+  forgetPassword: (email) => post('/api/auth/forgot-password', { email }),
+  verifyEmailOtp: (email, otp) =>post('/api/auth/verify-reset', { email, otp }),
+  resetPassword: (email, resetToken, newPassword) =>post('/api/auth/reset-password', { email, resetToken, newPassword }),
+
 };
 
 // ── Users ─────────────────────────────────────────────────────
@@ -191,7 +195,7 @@ const admin = {
   configAll:     ()             => get('/api/admin/config/all'),
   configSet:     (key, value)   => post('/api/admin/config', { key, value }),
   configBatch:   (obj)          => post('/api/admin/config/batch', obj),
-  dashboardStats:()             => get('/api/admin/dashboard/stats'),
+  dashboardStats:()             => get('/api/admin/analytics'),
 };
 const notifications = {
   list:    ()       => get('/api/notifications'),

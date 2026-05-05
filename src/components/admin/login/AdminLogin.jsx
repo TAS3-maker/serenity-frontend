@@ -3,6 +3,11 @@ import { Eye, EyeOff } from "../../../lib/icons";
 import { C } from "../../../tokens";
 import { AInp } from "../AdminShared";
 import { api } from "../../../lib/api";
+import logo from "../../../assets/logo.png"
+import rectangle from "../../../assets/rectangle.png"
+import finalLogo from "../../../assets/finalLogo.png"
+import { useNavigate } from "react-router-dom";
+import { Loader2 } from "lucide-react";
 
 // Demo credentials are read from Vite env vars so they're never hard-coded
 // in the bundle. In production set VITE_DEMO_ADMIN_EMAIL / VITE_DEMO_ADMIN_PASSWORD
@@ -17,8 +22,9 @@ export const AdminLogin = ({ onSuccess, onBack }) => {
   const [showPw, setShowPw] = useState(false);
   const [err, setErr]       = useState("");
   const [loading, setLoading] = useState(false);
-
-  const doLogin = async () => {
+const navigate=useNavigate()
+  const doLogin = async (e) => {
+    e.preventDefault()
     setErr("");
     if (!email || !pw) { setErr("Email and password required."); return; }
     setLoading(true);
@@ -26,11 +32,13 @@ export const AdminLogin = ({ onSuccess, onBack }) => {
       const data = await api.auth.adminLogin(email.trim(), pw);
       const token = data.token || data.accessToken;
       if (!token) throw new Error(data.message || "Login failed");
-      // The backend has set an httpOnly cookie. We also keep the token
-      // in-memory as a fallback for cookie-blocked environments — but never
-      // persist it to sessionStorage / localStorage (XSS-safe).
+   
       api.setToken(token);
-      onSuccess();
+      console.log("token",token);
+      
+      setLoading(false);
+      onSuccess()
+      
     } catch (e) {
       setErr(e?.data?.message || e?.message || "Invalid email or password.");
     } finally {
@@ -39,93 +47,139 @@ export const AdminLogin = ({ onSuccess, onBack }) => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4"
-      style={{ background: `linear-gradient(160deg,${C.navy},#0a1628)` }}
-      data-testid="admin-login-screen">
-      <div className="w-full max-w-[400px] rounded-2xl p-9"
-        style={{ background: "var(--adminCard)", boxShadow: "0 32px 72px rgba(0,0,0,0.35)" }}>
+    <div className="flex relative flex-col md:flex-row h-screen bg-white text-white no-scrollbar overflow-hidden">
+            {/* Left Section */}
 
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <img
-            src="/assets/logo-mark.png"
-            alt="SerenityDecoded"
-            className="object-contain mx-auto mb-4"
-            style={{ width:80, height:80, filter:"drop-shadow(0 4px 16px rgba(13,115,119,0.35))" }}
-          />
-          <div className="font-display font-bold text-xl text-[var(--text)] mb-1">SerenityDecoded</div>
-          <div className="text-sm text-[var(--textMuted)]">Admin Portal</div>
-        </div>
+<div className="absolute m-3">
+    <img
+    src={finalLogo}
+    alt="Illustration"
+    className=" object-cover rounded-3xl"
+  />
+</div>
 
-        <AInp
-          label="Email" type="email" value={email}
-          onChange={e => setEmail(e.target.value)}
-          onKeyDown={e => e.key === "Enter" && doLogin()}
-          placeholder="admin@serenitydecoded.com"
-          data-testid="admin-login-email"
-        />
+          
+            <div  className="lg:w-2/4 w-full flex flex-col items-center justify-center p-3 md:p-6" >
+                <div className="bg-white text-black p-10 rounded-lg min-w-full max-w-md">
+             
+                    {/* Dynamic Name */}
+                    <h1 className="text-2xl flex justify-center items-center font-bold mb-2 text-left ">
+                        Welcome Back
+                    </h1>
+                    <p className=" text-gray-400 flex justify-center items-center mb-6">
+                        Enter your Email and Password to login
+                    </p>
 
-        <div className="mb-4">
-          <label className="block text-[13px] font-semibold text-[var(--text)] mb-1.5">Password</label>
-          <div className="relative">
-            <input
-              type={showPw ? "text" : "password"} value={pw}
-              onChange={e => setPw(e.target.value)}
-              onKeyDown={e => e.key === "Enter" && doLogin()}
-              placeholder="••••••••"
-              data-testid="admin-login-password"
-              className="w-full h-11 rounded-xl px-4 pr-11 text-[13px] font-sans bg-[var(--bgCard)] text-[var(--text)] outline-none transition-all"
-              style={{ border:"1.5px solid var(--border)" }}
-              onFocus={e => (e.target.style.borderColor = "var(--teal)")}
-              onBlur={e  => (e.target.style.borderColor = "var(--border)")}
-            />
-            <button type="button" onClick={() => setShowPw(v => !v)}
-              data-testid="admin-login-toggle-password"
-              className="absolute right-3 top-1/2 -translate-y-1/2 bg-transparent border-none cursor-pointer text-[var(--textMuted)] hover:text-[var(--text)] transition-colors p-0">
-              {showPw ? <EyeOff size={16}/> : <Eye size={16}/>}
-            </button>
-          </div>
-        </div>
+                    {/* Form */}
+                    <form onSubmit={doLogin} className="space-y-">
+                    <div className="space-y-2 mb-4">
+                       
+                            <input
+                                type="email"
+                                id="email"
+                                className="w-full mt-1 px-3 py-4 border rounded-md focus:outline-none focus:ring focus:ring-blue-500"
+                                placeholder="Enter email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <div className="space-y-2 relative">
+      
+      <input
+        type={showPw ? 'text' : 'password'}
+        id="password"
+        className="w-full mt-1 px-3 py-4 border rounded-md focus:outline-none focus:ring focus:ring-blue-500 pr-10"
+        placeholder="Enter password"
+        value={pw}
+        onChange={(e) => setPw(e.target.value)}
+        required
 
-        {err && (
-          <div className="rounded-xl px-4 py-3 mb-4 text-[13px] font-medium"
-            data-testid="admin-login-error"
-            style={{ background:"var(--coralBg)", color:"var(--coral)" }}>
-            {err}
-          </div>
-        )}
+        
+      />
+   <span
+  className="absolute right-3 top-5 -translate-y-1/2 cursor-pointer text-gray-600"
+  onClick={() => setShowPw(!showPw)}
+>
 
-        <button onClick={doLogin} disabled={loading}
-          data-testid="admin-login-submit"
-          className="w-full h-12 rounded-xl font-bold text-[15px] text-white border-none cursor-pointer font-sans transition-opacity disabled:opacity-70"
-          style={{ background:`linear-gradient(135deg,${C.teal},#1E7145)` }}>
-          {loading ? "Signing in…" : "Sign in →"}
-        </button>
-
-        {onBack && (
-          <button onClick={onBack}
-            data-testid="admin-login-back"
-            className="w-full mt-3 h-10 rounded-xl text-[13px] font-semibold text-[var(--textMuted)] bg-transparent border border-[var(--border)] cursor-pointer font-sans hover:bg-[var(--bgMuted)] transition-colors">
-            ← Back to website
-          </button>
-        )}
-
-        {DEMO_CREDS_AVAILABLE && (
-          <div className="mt-5 p-4 rounded-xl" style={{ background:"var(--bgMuted)" }}>
-            <div className="text-[11px] text-[var(--textMuted)] mb-2.5 font-medium">Demo credentials</div>
-            <div className="text-[11px] font-mono text-[var(--textMuted)] mb-2.5">
-              {DEMO_EMAIL} / {DEMO_PASSWORD}
-            </div>
-            <button
-              onClick={() => { setEmail(DEMO_EMAIL); setPw(DEMO_PASSWORD); }}
-              data-testid="admin-login-autofill"
-              className="w-full h-8 rounded-lg text-[12px] font-bold font-sans cursor-pointer border transition-colors"
-              style={{ background:"var(--tealBg)", borderColor:"var(--tealBorder)", color:"var(--teal)" }}>
-              Auto-fill credentials
-            </button>
-          </div>
-        )}
-      </div>
+        {showPw ? <EyeOff size={20} /> : <Eye size={20} />}
+      </span>
     </div>
+    
+                       
+                        {/* Forgot Password */}
+                        <div className="text-right m-5" onClick={()=>navigate("/admin/forgot-password")}>
+                           
+                                {/* Forgot password? */}
+                    
+                            <span to="/updatepassword" className="text-gray-500 italic text-sm">
+                              Forgot password?
+                            </span>
+                        </div>
+
+                        {/* Login Button */}
+               <button
+  type="submit"
+  disabled={loading || !email || !pw}
+  className={`w-full py-2 rounded-md flex items-center justify-center gap-2 transition
+    ${loading || !email || !pw
+      ? 'bg-[rgba(13,115,119,1)] text-white cursor-not-allowed'
+      : 'bg-[rgba(13,115,119,1)] text-white hover:bg-[#2c2b2b]'}
+  `}
+>
+  {loading ? (
+    <>
+      <Loader2 className="animate-spin" size={18} />
+      Logging in...
+    </>
+  ) : (
+    "Login"
+  )}
+</button>
+                    </form>
+
+                    {/* <p className="text-center text-gray-500 mt-4">
+                        Don&apos;t have an account?{" "}
+                        <Link to="/" className="text-[#e14a16]">
+                        Register Now
+                      </Link>
+                    </p> */}
+                </div>
+       
+            </div>
+
+
+
+
+
+
+
+
+
+
+            {/* Right Section */}
+            <div className="w-3/5 h-full hidden lg:block relative" >
+  {/* Background image */}
+  <img
+    src={rectangle}
+    alt="Illustration"
+    className="h-full w-full object-cover rounded-3xl"
+  />
+
+  {/* Centered logo */}
+  <div className="absolute inset-0 flex items-center justify-center z-10">
+    <img
+      src={logo}
+      alt="Logo"
+      className="w-100 h-100 object-contain"
+    />
+  </div>
+  
+</div>
+
+
+
+
+</div>
   );
 };
