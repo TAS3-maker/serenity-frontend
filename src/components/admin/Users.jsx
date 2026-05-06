@@ -25,7 +25,9 @@ const apiUserToUi = (u) => ({
 });
 
 export const AUsers = ({ showToast }) => {
-  const [viewId, setViewId] = useState(null);
+const [viewId, setViewId] = useState(null);
+const [selectedUser, setSelectedUser] = useState(null);
+const [loadingUser, setLoadingUser] = useState(false);  
   const { data: rawUsers, loading, reload, setData } = useApi(
     () => api.users.list({ perPage: 200 }),
     { initial: [] }
@@ -46,7 +48,56 @@ export const AUsers = ({ showToast }) => {
       reload();
     }
   };
+const handleViewUser = async (id) => {
+  try {
+    setLoadingUser(true);
 
+    const res = await api.admin.getUserById(id);
+
+    if (!res?.user) throw new Error("Invalid response");
+
+    const u = res.user;
+
+    const formattedUser = {
+      id: u._id,
+      name: u.name || "-",
+      email: u.email || "-",
+      profile: u.stressProfile || "avoider",
+      plan: u.plan || "free",
+      country: u.country || "-",
+      device: u.device || "-",
+      status: u.isActive ? "active" : "inactive",
+
+      streak: u.streak ?? 0,
+      reliefScore: u.reliefScore ?? 0,
+      day: u.programDay ?? 0,
+
+      missionsComplete: u.missionsComplete ?? 0,
+      totalMissions: res.missions?.length ?? 0,
+
+      joined: u.createdAt
+        ? new Date(u.createdAt).toLocaleDateString()
+        : "-",
+
+      lastActive: u.lastActiveDate
+        ? new Date(u.lastActiveDate).toLocaleDateString()
+        : "-",
+
+
+      history: res.missions || [],
+      journal: res.journals || [],
+      payments: res.subscription ? [res.subscription] : [],
+    };
+
+    setSelectedUser(formattedUser);
+    setViewId(id);
+
+  } catch (e) {
+    showToast("Failed to load user", "error");
+  } finally {
+    setLoadingUser(false);
+  }
+};
   // Wrappers that match the (setUsers) signature the children expect.
   const setUsers = (next) => {
     if (typeof next === "function") {
@@ -70,19 +121,21 @@ export const AUsers = ({ showToast }) => {
     }
   };
 
-  if (viewId !== null) {
-    const user = users.find(u => u.id === viewId);
-    if (user) return (
-      <UserDetail
-        user={user}
-        users={users}
-        setUsers={setUsers}
-        onBack={() => setViewId(null)}
-        showToast={showToast}
-      />
-    );
-  }
-
+if (viewId !== null) {
+  return (
+    <UserDetail
+      user={selectedUser || {}}   // ✅ always render
+      users={users}
+      setUsers={setUsers}
+      onBack={() => {
+        setViewId(null);
+        setSelectedUser(null);
+      }}
+      showToast={showToast}
+      loading={loadingUser} // optional
+    />
+  );
+}
   if (loading && users.length === 0) {
     return (
       <div className="p-8 text-center text-[var(--textMuted)]" data-testid="users-loading">
@@ -92,11 +145,12 @@ export const AUsers = ({ showToast }) => {
   }
 
   return (
-    <UserList
-      users={users}
-      setUsers={setUsers}
-      onViewUser={setViewId}
-      showToast={showToast}
-    />
+<UserList
+  users={users}
+  setUsers={setUsers}
+  onViewUser={handleViewUser} 
+  showToast={showToast}
+  reload={reload}
+/>
   );
 };

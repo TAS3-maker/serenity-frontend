@@ -4,7 +4,7 @@ import { profileLabel, profileColor, profileVariant, planLabel, planVariant, STA
 import { Button, Badge, Toggle, Card, SearchBar, Select, Pager, Confirm } from "../../ui/index";
 import { Table } from "../../ui/Table";
 import { CsvImportModal } from "./CsvImport";
-
+import { AddUserModal } from "./AddUserModal";
 const PER = 10;
 
 const downloadCSV = (rows) => {
@@ -14,14 +14,14 @@ const downloadCSV = (rows) => {
   const a = document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="users_export.csv"; a.click();
 };
 
-export const UserList = ({ users, setUsers, onViewUser, showToast }) => {
+export const UserList = ({ users, setUsers, onViewUser, showToast ,reload }) => {
   const [search, setSearch]     = useState("");
   const [filter, setFilter]     = useState("all");
   const [page, setPage]         = useState(1);
   const [selected, setSelected] = useState(new Set());
   const [csvOpen, setCsvOpen]   = useState(false);
   const [bulkAction, setBulkAction] = useState(null);
-
+const [addOpen, setAddOpen] = useState(false);
 const filtered = useMemo(() => {
   let list = users;
 
@@ -164,7 +164,9 @@ const FILTER_TABS = ["all", "premium", "active", "new", "inactive"];
         <div className="flex gap-2">
           <Button size="sm" variant="ghost" icon={Download} onClick={()=>downloadCSV(filtered)}>Export CSV</Button>
           <Button size="sm" variant="ghost" icon={Upload} onClick={()=>setCsvOpen(true)}>Import CSV</Button>
-          <Button size="sm" onClick={()=>showToast("Add user form — coming soon.")}>+ Add User</Button>
+        <Button size="sm" onClick={() => setAddOpen(true)}>
+  + Add User
+</Button>
         </div>
       </div>
 
@@ -245,6 +247,16 @@ const FILTER_TABS = ["all", "premium", "active", "new", "inactive"];
         confirmLabel="Deactivate"
         onConfirm={()=>bulkDo("deactivate")}
       />
+   <AddUserModal
+  open={addOpen}
+  onClose={() => setAddOpen(false)}
+  showToast={showToast}
+   reload={reload}
+
+/>
+      
     </div>
+    
+    
   );
 };

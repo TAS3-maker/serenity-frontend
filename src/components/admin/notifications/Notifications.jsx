@@ -1,104 +1,206 @@
-import { useEffect, useState } from "react";
-import { AlertCircle, Flag, Users } from "../../../lib/icons";
-import { api } from "../../../lib/api";
-import { ACard, ABtn } from "../AdminShared";
+import { useState } from "react";
 
-const TIME_AGO = (date) => {
-  if (!date) return "";
-  const diff = Date.now() - new Date(date).getTime();
-  if (diff < 60_000)        return `${Math.max(1, Math.floor(diff / 1000))}s ago`;
-  if (diff < 3_600_000)     return `${Math.floor(diff / 60_000)}m ago`;
-  if (diff < 86_400_000)    return `${Math.floor(diff / 3_600_000)}h ago`;
-  return `${Math.floor(diff / 86_400_000)}d ago`;
-};
+const dummyData = [
+  {
+    id: 1,
+    name: "Sub Expiry → 3 Days",
+    desc: "Sends 3 days before Premium subscription expires",
+    lastRun: "Mar 16, 2026 09:00",
+    nextRun: "Mar 19, 2026 09:00",
+    active: true,
+  },
+];
 
-export const ANotifications = ({ showToast }) => {
-  const [notifs, setNotifs]   = useState([]);
-  const [filter, setFilter]   = useState("all");
-  const [loading, setLoading] = useState(true);
+export const ANotifications=()=> {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [mode, setMode] = useState("create"); // create | edit
+  const [selected, setSelected] = useState(null);
 
-  useEffect(() => {
-    api.notifications.list().then(r => {
-      const list = r?.notifications || r?.items || [];
-      setNotifs(list.map(n => ({
-        id:    n._id || n.id,
-        type:  n.type === "push" ? "user" : (n.severity || n.type || "alert"),
-        title: n.title || "",
-        msg:   n.body  || n.message || "",
-        time:  TIME_AGO(n.createdAt),
-        read:  !!n.isRead || !!n.readAt,
-      })));
-    }).catch(() => {/* keep empty list */}).finally(() => setLoading(false));
-  }, []);
-
-  const TYPE_ICON = { alert:AlertCircle, flag:Flag, user:Users };
-  const TYPE_COL  = { alert:"var(--coral)", flag:"var(--gold)", user:"var(--teal)" };
-  const shown     = filter === "unread" ? notifs.filter(n => !n.read) : notifs;
-  const unread    = notifs.filter(n => !n.read).length;
-
-  const markAllRead = async () => {
-    try { await api.notifications.readAll(); }
-    catch { /* still update locally */ }
-    setNotifs(ns => ns.map(n => ({ ...n, read: true })));
-    showToast("All marked read.");
+  const openCreate = () => {
+    setMode("create");
+    setSelected(null);
+    setModalOpen(true);
   };
 
-  const markRead = async (id) => {
-    try { await api.notifications.read(id); } catch { /* ignore */ }
-    setNotifs(ns => ns.map(x => x.id === id ? { ...x, read: true } : x));
+  const openEdit = (item) => {
+    setMode("edit");
+    setSelected(item);
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+    setSelected(null);
   };
 
   return (
-    <div data-testid="admin-notifications">
-      <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
+    <div className="p-6 bg-[#f4f6f6] min-h-screen relative">
+
+      {/* HEADER */}
+      <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="font-display font-bold text-xl text-[var(--text)]">Notifications</h1>
-          {unread > 0 && <p className="text-[13px] mt-0.5" style={{ color:"var(--coral)" }}>{unread} unread</p>}
+          <h1 className="text-xl font-bold">Notification Scheduler</h1>
+          <p className="text-xs text-gray-500">
+            Automated emails and push notifications
+          </p>
         </div>
-        <div className="flex gap-2">
-          {["all","unread"].map(f => (
-            <button key={f} onClick={() => setFilter(f)}
-              className="h-8 px-4 rounded-xl text-[12px] font-semibold border-none cursor-pointer font-sans capitalize"
-              style={{ background:filter===f?"var(--teal)":"var(--bgMuted)", color:filter===f?"#fff":"var(--textMuted)" }}>
-              {f}
-            </button>
-          ))}
-          <ABtn size="sm" variant="ghost" onClick={markAllRead}>Mark all read</ABtn>
-        </div>
+
+        <button
+          onClick={openCreate}
+          className="bg-teal-700 text-white px-4 py-2 rounded-md text-sm"
+        >
+          New Scheduler
+        </button>
       </div>
 
-      <ACard noPad>
-        {loading
-          ? <div className="text-center py-12 text-[13px] text-[var(--textMuted)]">Loading…</div>
-          : shown.length === 0
-            ? <div className="text-center py-12 text-[13px] text-[var(--textMuted)]">
-                No {filter === "unread" ? "unread " : ""}notifications.
+      {/* LIST */}
+      <div className="space-y-4">
+        {dummyData.map((item) => (
+          <div
+            key={item.id}
+            className="bg-white p-5 rounded-xl shadow-sm border"
+          >
+            <div className="flex justify-between items-center">
+              <h3 className="font-semibold">{item.name}</h3>
+              <div className="w-10 h-5 bg-teal-600 rounded-full" />
+            </div>
+
+            <p className="text-sm text-gray-500 mt-2">{item.desc}</p>
+
+            <div className="flex gap-3 mt-3 text-xs">
+              <span className="bg-gray-200 px-2 py-1 rounded">
+                Last run: {item.lastRun}
+              </span>
+              <span className="bg-teal-100 px-2 py-1 rounded">
+                Next run: {item.nextRun}
+              </span>
+            </div>
+
+            <div className="flex gap-2 mt-4">
+              <button
+                onClick={() => openEdit(item)}
+                className="px-3 py-1 border rounded text-sm"
+              >
+                Edit
+              </button>
+
+              <button className="px-3 py-1 bg-teal-700 text-white rounded text-sm">
+                Send now
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* ===================== */}
+      {/* MODAL */}
+      {/* ===================== */}
+      {modalOpen && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+
+          {/* Modal Card */}
+          <div className="bg-white w-full max-w-md rounded-xl shadow-lg p-6 relative">
+
+            {/* Close button */}
+            <button
+              onClick={closeModal}
+              className="absolute top-3 right-3 text-gray-500"
+            >
+              ✕
+            </button>
+
+            <h2 className="text-lg font-semibold mb-4">
+              {mode === "create" ? "New Scheduler" : "Edit Scheduler"}
+            </h2>
+
+            <div className="space-y-4">
+
+              <div>
+                <label className="text-xs text-gray-500">Name</label>
+                <input
+                  defaultValue={selected?.name || ""}
+                  className="w-full border px-3 py-2 rounded"
+                />
               </div>
-            : shown.map((n, i) => {
-                const Ico = TYPE_ICON[n.type] || AlertCircle;
-                const col = TYPE_COL[n.type]  || "var(--teal)";
-                return (
-                  <div key={n.id}
-                    onClick={() => markRead(n.id)}
-                    className="flex gap-3 px-5 py-4 cursor-pointer transition-colors hover:bg-[var(--bgMuted)]"
-                    style={{ borderBottom:i<shown.length-1?"1px solid var(--border)":"none", background:n.read?"transparent":"var(--tealBg)" }}>
-                    <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-                      style={{ background:col+"18" }}>
-                      <Ico size={15} color={col}/>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className={`text-[13px] text-[var(--text)] ${n.read?"font-medium":"font-bold"}`}>{n.title}</span>
-                        {!n.read && <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background:"var(--teal)" }}/>}
-                      </div>
-                      <p className="text-[12px] text-[var(--textMuted)] mt-0.5">{n.msg}</p>
-                      <span className="text-[11px] text-[var(--textFaint)] mt-0.5 block">{n.time}</span>
-                    </div>
-                  </div>
-                );
-              })
-        }
-      </ACard>
+
+              <div>
+                <label className="text-xs text-gray-500">Description</label>
+                <textarea
+                  defaultValue={selected?.desc || ""}
+                  className="w-full border px-3 py-2 rounded"
+                />
+              </div>
+
+              {/* Schedule Box */}
+              <div className="border rounded-lg p-4 bg-gray-50">
+                <h4 className="text-sm font-semibold text-teal-700 mb-3">
+                  Schedule Timing
+                </h4>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <select className="border p-2 rounded">
+                    <option>Offset from event</option>
+                  </select>
+
+                  <select className="border p-2 rounded">
+                    <option>Before</option>
+                    <option>After</option>
+                  </select>
+
+                  <input
+                    type="number"
+                    placeholder="Days"
+                    className="border p-2 rounded"
+                  />
+
+                  <select className="border p-2 rounded">
+                    <option>Timezone</option>
+                  </select>
+
+                  <input
+                    type="time"
+                    className="border p-2 rounded col-span-2"
+                  />
+                </div>
+              </div>
+
+              {/* More fields */}
+              <div className="grid grid-cols-2 gap-3">
+                <select className="border p-2 rounded">
+                  <option>Trigger Event</option>
+                </select>
+
+                <select className="border p-2 rounded">
+                  <option>Channel</option>
+                </select>
+
+                <select className="border p-2 rounded">
+                  <option>Audience</option>
+                </select>
+
+                <select className="border p-2 rounded">
+                  <option>Email Template</option>
+                </select>
+              </div>
+
+              {/* Buttons */}
+              <div className="flex justify-between mt-6">
+                <button
+                  onClick={closeModal}
+                  className="px-4 py-2 border rounded"
+                >
+                  Cancel
+                </button>
+
+                <button className="px-4 py-2 bg-teal-700 text-white rounded">
+                  Save Scheduler
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
-};
+}
