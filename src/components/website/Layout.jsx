@@ -87,14 +87,14 @@ export const WebNav = ({ active, onNav }) => {
         </div>
 
         {/* Desktop Right side */}
-        {/* <div className="hidden lg:flex items-center justify-end">
-          <button
+       <div className="hidden lg:flex items-center justify-end">
+          {/* <button
             onClick={() => handleNav("admin")}
             className="bg-[#0D7377] hover:bg-teal-700 text-white px-5 py-2 rounded-lg font-semibold font-jost text-sm transition-all duration-300"
           >
             Sign In
-          </button>
-        </div> */}
+          </button> */}
+        </div>
 
         {/* Mobile/Tablet Hamburger */}
         <div className="flex lg:hidden items-center">
