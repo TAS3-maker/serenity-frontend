@@ -5,6 +5,14 @@ import { C } from "../../tokens";
 import finalLogo from "../../assets/logoFooter.svg";
 import headerLogo from "../../assets/finalLogo.svg";
 
+import facebook from "./assets/facebook.svg";
+import twitter from "./assets/twitter.svg";
+import linkdin from "./assets/linkdin.svg";
+import instagram from "./assets/instagram.svg";
+import youtube from "./assets/youtube.svg";
+import tiktok from "./assets/tiktok.svg";
+import { Link } from "react-router-dom";
+
 export const WebNav = ({ active, onNav }) => {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -220,7 +228,28 @@ export const WebFooter = ({ onNav, showToast }) => (
           Not another budgeting app.
         </p>
 
-        <div className="flex gap-2 flex-wrap justify-center">
+        <div className="flex gap-4 items-center">
+              <Link to="https://www.facebook.com/serenitydecoded/" target="_blank">
+                  <img src={facebook} alt="facebook" className="w-6 h-6 brightness-0 invert " />
+              </Link>
+               <Link to="https://x.com/SerenityDecoded" target="_blank">
+                  <img src={twitter} alt="twitter" className="w-6 h-6 brightness-0 invert" />
+              </Link>
+               <Link to="https://www.instagram.com/serenitydecoded/" target="_blank">
+                  <img src={instagram} alt="instagram" className="w-6 h-6 brightness-0 invert" />
+              </Link>
+               <Link to="https://www.tiktok.com/@serenitydecoded" target="_blank">
+                  <img src={tiktok} alt="tiktok" className="w-6 h-6 brightness-0 invert" />
+              </Link>
+               <Link to="https://www.youtube.com/@SerenityDecoded" target="_blank">
+                  <img src={youtube} alt="youtube" className="w-6 h-6 brightness-0 invert" />
+              </Link>
+               <Link to="https://www.linkedin.com/in/serenity-decoded-6039673b6/" target="_blank">
+                  <img src={linkdin} alt="linkedin" className="w-6 h-6 brightness-0 invert" />
+              </Link>
+            </div>
+
+        {/* <div className="flex gap-2 flex-wrap justify-center">
           {["App Store", "Google Play"].map((s) => (
             <button
               key={s}
@@ -238,7 +267,7 @@ export const WebFooter = ({ onNav, showToast }) => (
               {s}
             </button>
           ))}
-        </div>
+        </div> */}
       </div>
 
       {/* Link columns */}
@@ -288,7 +317,29 @@ export const WebFooter = ({ onNav, showToast }) => (
           <br />
           Not another budgeting app.
         </p>
-        <div className="flex gap-5 flex-wrap justify-center">
+
+        <div className="flex gap-4 items-center">
+              <Link to="https://www.facebook.com/serenitydecoded/" target="_blank">
+                  <img src={facebook} alt="facebook" className="w-6 h-6 brightness-0 invert " />
+              </Link>
+               <Link to="https://x.com/SerenityDecoded" target="_blank">
+                  <img src={twitter} alt="twitter" className="w-6 h-6 brightness-0 invert" />
+              </Link>
+               <Link to="https://www.instagram.com/serenitydecoded/" target="_blank">
+                  <img src={instagram} alt="instagram" className="w-6 h-6 brightness-0 invert" />
+              </Link>
+               <Link to="https://www.tiktok.com/@serenitydecoded" target="_blank">
+                  <img src={tiktok} alt="tiktok" className="w-6 h-6 brightness-0 invert" />
+              </Link>
+               <Link to="https://www.youtube.com/@SerenityDecoded" target="_blank">
+                  <img src={youtube} alt="youtube" className="w-6 h-6 brightness-0 invert" />
+              </Link>
+               <Link to="https://www.linkedin.com/in/serenity-decoded-6039673b6/" target="_blank">
+                  <img src={linkdin} alt="linkedin" className="w-6 h-6 brightness-0 invert" />
+              </Link>
+            </div>
+        
+        {/* <div className="flex gap-5 flex-wrap justify-center">
           {["App Store", "Google Play"].map((s) => (
             <button
               key={s}
@@ -306,7 +357,7 @@ export const WebFooter = ({ onNav, showToast }) => (
               {s}
             </button>
           ))}
-        </div>
+        </div> */}
       </div>
 
       {/* 3 link columns in one row */}
@@ -361,7 +412,31 @@ export const WebFooter = ({ onNav, showToast }) => (
               <br />
               Not another budgeting app.
             </p>
-            <div className="flex gap-2.5 mt-2">
+
+
+            <div className="flex gap-4 items-center">
+              <Link to="https://www.facebook.com/serenitydecoded/" target="_blank">
+                  <img src={facebook} alt="facebook" className="w-6 h-6 brightness-0 invert " />
+              </Link>
+               <Link to="https://x.com/SerenityDecoded" target="_blank">
+                  <img src={twitter} alt="twitter" className="w-6 h-6 brightness-0 invert" />
+              </Link>
+               <Link to="https://www.instagram.com/serenitydecoded/" target="_blank">
+                  <img src={instagram} alt="instagram" className="w-6 h-6 brightness-0 invert" />
+              </Link>
+               <Link to="https://www.tiktok.com/@serenitydecoded" target="_blank">
+                  <img src={tiktok} alt="tiktok" className="w-6 h-6 brightness-0 invert" />
+              </Link>
+               <Link to="https://www.youtube.com/@SerenityDecoded" target="_blank">
+                  <img src={youtube} alt="youtube" className="w-6 h-6 brightness-0 invert" />
+              </Link>
+               <Link to="https://www.linkedin.com/in/serenity-decoded-6039673b6/" target="_blank">
+                  <img src={linkdin} alt="linkedin" className="w-6 h-6 brightness-0 invert" />
+              </Link>
+            </div>
+            
+            
+            {/* <div className="flex gap-2.5 mt-2">
               {["App Store", "Google Play"].map((s) => (
                 <button
                   key={s}
@@ -379,7 +454,7 @@ export const WebFooter = ({ onNav, showToast }) => (
                   {s}
                 </button>
               ))}
-            </div>
+            </div> */}
           </div>
 
           {/* Link columns */}
