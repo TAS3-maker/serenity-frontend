@@ -35,6 +35,7 @@ export const ANAV = [
   { id: "blog",         l: "Blog & Comments",   i: "book",     badge: "2" },
   { id: "community",    l: "Community",     i: "flag",     badge: "1" },
   { id: "programs",     l: "Programs",          i: "star"    },
+  { id: "insights",    l: "Daily Insights",   i: "brain" },
   { id: "notifications",l: "Notifications Scheduler",     i: "bell"    },
   { id: "push",         l: "Notification Push",       i: "send"    },
   { id: "email_cfg",    l: "Email / SMTP",      i: "globe"},

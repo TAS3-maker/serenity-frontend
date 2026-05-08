@@ -1,36 +1,246 @@
 import { useState } from "react";
+import { api } from "../../../lib/api";
+import {
+  useApi,
+  useMutation,
+} from "../../../lib/useApi";
 
-const dummyData = [
-  {
-    id: 1,
-    name: "Sub Expiry → 3 Days",
-    desc: "Sends 3 days before Premium subscription expires",
-    lastRun: "Mar 16, 2026 09:00",
-    nextRun: "Mar 19, 2026 09:00",
+export const ANotifications = ({
+  showToast,
+}) => {
+  // =====================================
+  // API DATA
+  // =====================================
+
+  const {
+    data: items = [],
+    loading,
+    reload,
+    setData,
+  } = useApi(
+    api.scheduler.cronList,
+    {
+      initial: [],
+    }
+  );
+
+  const mutate = useMutation(
+    showToast,
+    reload
+  );
+
+  // =====================================
+  // UI STATE
+  // =====================================
+
+  const [modalOpen, setModalOpen] =
+    useState(false);
+
+  const [mode, setMode] =
+    useState("create");
+
+  const [selected, setSelected] =
+    useState(null);
+
+  const [saving, setSaving] =
+    useState(false);
+
+  const emptyForm = {
+    name: "",
+    description: "",
+
+    trigger: "",
+    channel: "inapp",
+
+    audience: "all",
+
+    template: "",
+
+    offsetDays: 0,
+
+    direction: "before",
+
+    timezone: "Asia/Kolkata",
+
+    time: "09:00",
+
     active: true,
-  },
-];
-
-export const ANotifications=()=> {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [mode, setMode] = useState("create"); // create | edit
-  const [selected, setSelected] = useState(null);
-
-  const openCreate = () => {
-    setMode("create");
-    setSelected(null);
-    setModalOpen(true);
   };
 
-  const openEdit = (item) => {
-    setMode("edit");
-    setSelected(item);
-    setModalOpen(true);
-  };
+  const [form, setForm] =
+    useState(emptyForm);
+
+  // =====================================
+  // HELPERS
+  // =====================================
+
+  const sf = (k, v) =>
+    setForm((f) => ({
+      ...f,
+      [k]: v,
+    }));
 
   const closeModal = () => {
     setModalOpen(false);
+
     setSelected(null);
+
+    setForm(emptyForm);
+  };
+
+  // =====================================
+  // CREATE
+  // =====================================
+
+  const openCreate = () => {
+    setMode("create");
+
+    setSelected(null);
+
+    setForm(emptyForm);
+
+    setModalOpen(true);
+  };
+
+  // =====================================
+  // EDIT
+  // =====================================
+
+  const openEdit = (item) => {
+    setMode("edit");
+
+    setSelected(item);
+
+    setForm({
+      name: item.name || "",
+      description:
+        item.description || "",
+
+      trigger: item.trigger || "",
+
+      channel:
+        item.channel || "inapp",
+
+      audience:
+        item.audience || "all",
+
+      template:
+        item.template || "",
+
+      offsetDays:
+        item.offsetDays || 0,
+
+      direction:
+        item.direction || "before",
+
+      timezone:
+        item.timezone ||
+        "Asia/Kolkata",
+
+      time: item.time || "09:00",
+
+      active:
+        item.active ?? true,
+    });
+
+    setModalOpen(true);
+  };
+
+  // =====================================
+  // SAVE
+  // =====================================
+
+  const saveScheduler = async () => {
+    try {
+      setSaving(true);
+
+      if (mode === "create") {
+        await mutate(
+          api.scheduler.cronCreate(
+            form
+          ),
+          "Scheduler created"
+        );
+      } else {
+        await mutate(
+          api.scheduler.cronUpdate(
+            selected._id,
+            form
+          ),
+          "Scheduler updated"
+        );
+      }
+
+      closeModal();
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // =====================================
+  // DELETE
+  // =====================================
+
+  const removeScheduler = async (
+    id
+  ) => {
+    const ok = window.confirm(
+      "Delete this scheduler?"
+    );
+
+    if (!ok) return;
+
+    await mutate(
+      api.scheduler.cronDelete(id),
+      "Scheduler deleted"
+    );
+  };
+
+  // =====================================
+  // TOGGLE ACTIVE
+  // =====================================
+
+  const toggleActive = async (
+    item
+  ) => {
+    // optimistic update
+    setData((prev) =>
+      prev.map((x) =>
+        x._id === item._id
+          ? {
+              ...x,
+              active: !x.active,
+            }
+          : x
+      )
+    );
+
+    try {
+      await mutate(
+        api.scheduler.cronUpdate(
+          item._id,
+          {
+            active: !item.active,
+          }
+        ),
+        item.active
+          ? "Scheduler disabled"
+          : "Scheduler enabled"
+      );
+    } catch {
+      reload();
+    }
+  };
+
+  // =====================================
+  // RUN NOW
+  // =====================================
+
+  const runNow = async (item) => {
+    await mutate(
+      api.scheduler.cronRun(item._id),
+      "Scheduler triggered"
+    );
   };
 
   return (
@@ -39,7 +249,10 @@ export const ANotifications=()=> {
       {/* HEADER */}
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-xl font-bold">Notification Scheduler</h1>
+          <h1 className="text-xl font-bold">
+            Notification Scheduler
+          </h1>
+
           <p className="text-xs text-gray-500">
             Automated emails and push notifications
           </p>
@@ -55,53 +268,125 @@ export const ANotifications=()=> {
 
       {/* LIST */}
       <div className="space-y-4">
-        {dummyData.map((item) => (
-          <div
-            key={item.id}
-            className="bg-white p-5 rounded-xl shadow-sm border"
-          >
-            <div className="flex justify-between items-center">
-              <h3 className="font-semibold">{item.name}</h3>
-              <div className="w-10 h-5 bg-teal-600 rounded-full" />
-            </div>
 
-            <p className="text-sm text-gray-500 mt-2">{item.desc}</p>
-
-            <div className="flex gap-3 mt-3 text-xs">
-              <span className="bg-gray-200 px-2 py-1 rounded">
-                Last run: {item.lastRun}
-              </span>
-              <span className="bg-teal-100 px-2 py-1 rounded">
-                Next run: {item.nextRun}
-              </span>
-            </div>
-
-            <div className="flex gap-2 mt-4">
-              <button
-                onClick={() => openEdit(item)}
-                className="px-3 py-1 border rounded text-sm"
-              >
-                Edit
-              </button>
-
-              <button className="px-3 py-1 bg-teal-700 text-white rounded text-sm">
-                Send now
-              </button>
-            </div>
+        {loading ? (
+          <div className="bg-white p-6 rounded-xl border text-sm text-gray-500">
+            Loading schedulers...
           </div>
-        ))}
+        ) : items.length === 0 ? (
+          <div className="bg-white p-6 rounded-xl border text-sm text-gray-500">
+            No schedulers found.
+          </div>
+        ) : (
+          items.map((item) => (
+            <div
+              key={item._id}
+              className="bg-white p-5 rounded-xl shadow-sm border"
+            >
+              <div className="flex justify-between items-center">
+                <div>
+                  <h3 className="font-semibold">
+                    {item.name}
+                  </h3>
+
+                  <p className="text-sm text-gray-500 mt-1">
+                    {
+                      item.description
+                    }
+                  </p>
+                </div>
+
+                {/* toggle */}
+                <button
+                  onClick={() =>
+                    toggleActive(item)
+                  }
+                  className={`w-12 h-6 rounded-full transition ${
+                    item.active
+                      ? "bg-teal-600"
+                      : "bg-gray-300"
+                  }`}
+                >
+                  <div
+                    className={`w-5 h-5 bg-white rounded-full transition ${
+                      item.active
+                        ? "translate-x-6"
+                        : "translate-x-1"
+                    }`}
+                  />
+                </button>
+              </div>
+
+              {/* meta */}
+              <div className="flex gap-3 mt-3 text-xs flex-wrap">
+
+                <span className="bg-gray-200 px-2 py-1 rounded">
+                  Trigger:{" "}
+                  {item.trigger ||
+                    "—"}
+                </span>
+
+                <span className="bg-gray-200 px-2 py-1 rounded">
+                  Channel:{" "}
+                  {item.channel}
+                </span>
+
+                <span className="bg-gray-200 px-2 py-1 rounded">
+                  Audience:{" "}
+                  {item.audience}
+                </span>
+
+                <span className="bg-teal-100 px-2 py-1 rounded">
+                  Time: {item.time}
+                </span>
+              </div>
+
+              {/* actions */}
+              <div className="flex gap-2 mt-4">
+
+                <button
+                  onClick={() =>
+                    openEdit(item)
+                  }
+                  className="px-3 py-1 border rounded text-sm"
+                >
+                  Edit
+                </button>
+
+                <button
+                  onClick={() =>
+                    runNow(item)
+                  }
+                  className="px-3 py-1 bg-teal-700 text-white rounded text-sm"
+                >
+                  Send now
+                </button>
+
+                <button
+                  onClick={() =>
+                    removeScheduler(
+                      item._id
+                    )
+                  }
+                  className="px-3 py-1 bg-red-500 text-white rounded text-sm"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))
+        )}
       </div>
 
-      {/* ===================== */}
+      {/* ===================================== */}
       {/* MODAL */}
-      {/* ===================== */}
+      {/* ===================================== */}
+
       {modalOpen && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
 
-          {/* Modal Card */}
           <div className="bg-white w-full max-w-md rounded-xl shadow-lg p-6 relative">
 
-            {/* Close button */}
             <button
               onClick={closeModal}
               className="absolute top-3 right-3 text-gray-500"
@@ -110,97 +395,207 @@ export const ANotifications=()=> {
             </button>
 
             <h2 className="text-lg font-semibold mb-4">
-              {mode === "create" ? "New Scheduler" : "Edit Scheduler"}
+              {mode === "create"
+                ? "New Scheduler"
+                : "Edit Scheduler"}
             </h2>
 
             <div className="space-y-4">
 
-              <div>
-                <label className="text-xs text-gray-500">Name</label>
-                <input
-                  defaultValue={selected?.name || ""}
-                  className="w-full border px-3 py-2 rounded"
-                />
-              </div>
+              <input
+                value={form.name}
+                onChange={(e) =>
+                  sf(
+                    "name",
+                    e.target.value
+                  )
+                }
+                placeholder="Scheduler name"
+                className="w-full border px-3 py-2 rounded"
+              />
 
-              <div>
-                <label className="text-xs text-gray-500">Description</label>
-                <textarea
-                  defaultValue={selected?.desc || ""}
-                  className="w-full border px-3 py-2 rounded"
-                />
-              </div>
+              <textarea
+                value={
+                  form.description
+                }
+                onChange={(e) =>
+                  sf(
+                    "description",
+                    e.target.value
+                  )
+                }
+                placeholder="Description"
+                className="w-full border px-3 py-2 rounded"
+              />
 
-              {/* Schedule Box */}
-              <div className="border rounded-lg p-4 bg-gray-50">
-                <h4 className="text-sm font-semibold text-teal-700 mb-3">
-                  Schedule Timing
-                </h4>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <select className="border p-2 rounded">
-                    <option>Offset from event</option>
-                  </select>
-
-                  <select className="border p-2 rounded">
-                    <option>Before</option>
-                    <option>After</option>
-                  </select>
-
-                  <input
-                    type="number"
-                    placeholder="Days"
-                    className="border p-2 rounded"
-                  />
-
-                  <select className="border p-2 rounded">
-                    <option>Timezone</option>
-                  </select>
-
-                  <input
-                    type="time"
-                    className="border p-2 rounded col-span-2"
-                  />
-                </div>
-              </div>
-
-              {/* More fields */}
               <div className="grid grid-cols-2 gap-3">
-                <select className="border p-2 rounded">
-                  <option>Trigger Event</option>
+
+                <select
+                  value={form.trigger}
+                  onChange={(e) =>
+                    sf(
+                      "trigger",
+                      e.target.value
+                    )
+                  }
+                  className="border p-2 rounded"
+                >
+                  <option value="">
+                    Trigger Event
+                  </option>
+
+                  <option value="subscription_expiry">
+                    Subscription Expiry
+                  </option>
+
+                  <option value="streak_reminder">
+                    Streak Reminder
+                  </option>
+
+                  <option value="inactive_users">
+                    Inactive Users
+                  </option>
                 </select>
 
-                <select className="border p-2 rounded">
-                  <option>Channel</option>
+                <select
+                  value={form.channel}
+                  onChange={(e) =>
+                    sf(
+                      "channel",
+                      e.target.value
+                    )
+                  }
+                  className="border p-2 rounded"
+                >
+                  <option value="inapp">
+                    In App
+                  </option>
+
+                  <option value="push">
+                    Push
+                  </option>
+
+                  <option value="email">
+                    Email
+                  </option>
                 </select>
 
-                <select className="border p-2 rounded">
-                  <option>Audience</option>
+                <select
+                  value={form.audience}
+                  onChange={(e) =>
+                    sf(
+                      "audience",
+                      e.target.value
+                    )
+                  }
+                  className="border p-2 rounded"
+                >
+                  <option value="all">
+                    All Users
+                  </option>
+
+                  <option value="premium">
+                    Premium
+                  </option>
+
+                  <option value="free">
+                    Free
+                  </option>
                 </select>
 
-                <select className="border p-2 rounded">
-                  <option>Email Template</option>
+                <input
+                  value={
+                    form.template
+                  }
+                  onChange={(e) =>
+                    sf(
+                      "template",
+                      e.target.value
+                    )
+                  }
+                  placeholder="Template"
+                  className="border p-2 rounded"
+                />
+
+                <input
+                  type="number"
+                  value={
+                    form.offsetDays
+                  }
+                  onChange={(e) =>
+                    sf(
+                      "offsetDays",
+                      Number(
+                        e.target.value
+                      )
+                    )
+                  }
+                  placeholder="Offset days"
+                  className="border p-2 rounded"
+                />
+
+                <select
+                  value={
+                    form.direction
+                  }
+                  onChange={(e) =>
+                    sf(
+                      "direction",
+                      e.target.value
+                    )
+                  }
+                  className="border p-2 rounded"
+                >
+                  <option value="before">
+                    Before
+                  </option>
+
+                  <option value="after">
+                    After
+                  </option>
                 </select>
+
+                <input
+                  type="time"
+                  value={form.time}
+                  onChange={(e) =>
+                    sf(
+                      "time",
+                      e.target.value
+                    )
+                  }
+                  className="border p-2 rounded col-span-2"
+                />
               </div>
 
-              {/* Buttons */}
               <div className="flex justify-between mt-6">
+
                 <button
-                  onClick={closeModal}
+                  onClick={
+                    closeModal
+                  }
                   className="px-4 py-2 border rounded"
                 >
                   Cancel
                 </button>
 
-                <button className="px-4 py-2 bg-teal-700 text-white rounded">
-                  Save Scheduler
+                <button
+                  onClick={
+                    saveScheduler
+                  }
+                  disabled={saving}
+                  className="px-4 py-2 bg-teal-700 text-white rounded"
+                >
+                  {saving
+                    ? "Saving..."
+                    : "Save Scheduler"}
                 </button>
-              </div>
 
+              </div>
             </div>
           </div>
         </div>
       )}
     </div>
   );
-}
+};

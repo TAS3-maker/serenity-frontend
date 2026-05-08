@@ -4,7 +4,7 @@ import { ANAV, NavIcon } from "../AdminShared";
 import { C } from "../../../tokens";
 import dashboardLogo from "../../../assets/dashboardLogo.png"
 
-export const AdminSidebar = ({ sec, setSec, onLogout, onCloseMobile }) => {
+export const AdminSidebar = ({ sec, setSec, onLogout, onCloseMobile ,admin}) => {
   
   return (
     <div className="flex flex-col h-full overflow-hidden bg-[rgba(13,115,119,1)]" >
@@ -69,11 +69,20 @@ sec === item.id
         <div className="flex items-center gap-2.5 mb-3">
           <div className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs text-white flex-shrink-0"
             style={{ background: `linear-gradient(135deg,${C.teal},#1E7145)` }}>
-            A
+           {admin?.name?.charAt(0)?.toUpperCase() || "A"}
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-xs font-semibold text-white/80 truncate">Admin User</div>
-            <div className="text-[10px] text-white/30">Super Admin</div>
+        <div className="text-xs font-semibold text-white/80 truncate">
+  {admin?.name || "Admin User"}
+</div>
+
+<div className="text-[10px] text-white/30">
+  {admin?.role === "superadmin"
+    ? "Super Admin"
+    : admin?.role === "admin"
+    ? "Admin"
+    : admin?.role || "Staff"}
+</div>
           </div>
         </div>
         <button

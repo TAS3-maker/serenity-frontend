@@ -1,135 +1,317 @@
 import { useState, useMemo } from "react";
-import { Users, MessageSquare, Flag, Trash2, Settings, Eye, Plus, ShieldCheck, UserX, Search } from "../../../lib/icons";
+import {
+  Users,
+  MessageSquare,
+  Flag,
+  Trash2,
+  Settings,
+  Eye,
+  Plus,
+  ShieldCheck,
+  UserX,
+  Search,
+} from "../../../lib/icons";
+
 import { C } from "../../../tokens";
 import { api } from "../../../lib/api";
 import { useApi } from "../../../lib/useApi";
-import { Button, Badge, Card, Modal, Confirm, Toggle, Input, Select, SearchBar, Pager } from "../../ui/index";
+
+import {
+  Button,
+  Badge,
+  Card,
+  Modal,
+  Confirm,
+  Toggle,
+  Input,
+  Select,
+  SearchBar,
+  Pager,
+} from "../../ui/index";
+
 import { Table } from "../../ui/Table";
 
 const PER = 10;
 
-// ─── helpers ─────────────────────────────────────────────────────
+// ───────────────── helpers ─────────────────
 const getUserById = (u) =>
   !u || u === 0
-    ? { id:0, name:"SerenityDecoded (Platform)", email:"team@serenitydecoded.com" }
-    : (typeof u === "object" ? { id: u._id || u.id, name: u.name || "Member", email: u.email || "" }
-                             : { id: u, name: "Member", email: "" });
+    ? {
+        id: 0,
+        name: "SerenityDecoded (Platform)",
+        email: "team@serenitydecoded.com",
+      }
+    : typeof u === "object"
+    ? {
+        id: u._id || u.id,
+        name: u.name || "Member",
+        email: u.email || "",
+      }
+    : {
+        id: u,
+        name: "Member",
+        email: "",
+      };
 
-const totalReactions = (msgs) =>
-  msgs.reduce((sum, m) => sum + Object.values(m.reactions||{}).reduce((a,b) => a+b, 0), 0);
+const totalReactions = (msgs = []) =>
+  msgs.reduce(
+    (sum, m) =>
+      sum +
+      Object.values(m.reactions || {}).reduce((a, b) => a + b, 0),
+    0
+  );
 
-const reportedMsgs = (msgs) => msgs.filter(m => (m.reports||0) > 0);
+const formatDate = (d) => {
+  if (!d) return "—";
 
-// ─── Overview stats strip ────────────────────────────────────────
+  try {
+    return new Date(d).toLocaleString();
+  } catch {
+    return "—";
+  }
+};
+
+// ───────────────── stats pill ─────────────────
 const StatPill = ({ label, value, color }) => (
-  <div className="rounded-2xl p-5 border" style={{ background:"var(--adminCard)", borderColor:"var(--border)", borderTop:`3px solid ${color}` }}>
-    <div className="font-display font-bold text-[28px] leading-none mb-1" style={{ color }}>{value}</div>
-    <div className="text-[12px] text-[var(--textMuted)]">{label}</div>
+  <div
+    className="rounded-2xl p-5 border"
+    style={{
+      background: "var(--adminCard)",
+      borderColor: "var(--border)",
+      borderTop: `3px solid ${color}`,
+    }}
+  >
+    <div
+      className="font-display font-bold text-[28px] leading-none mb-1"
+      style={{ color }}
+    >
+      {value}
+    </div>
+
+    <div className="text-[12px] text-[var(--textMuted)]">
+      {label}
+    </div>
   </div>
 );
 
-// ─── Message view modal ──────────────────────────────────────────
-const ChatModal = ({ open, onClose, group, messages, onDeleteMsg, onPinMsg, onWarnUser, showToast }) => {
+// ───────────────── chat modal ─────────────────
+const ChatModal = ({
+  open,
+  onClose,
+  group,
+  messages,
+  onDeleteMsg,
+
+  onWarnUser,
+  onReportMsg,
+  showToast,
+}) => {
   const [page, setPage] = useState(1);
   const [filter, setFilter] = useState("all");
+
   const msgs = messages[group?.id] || [];
-  const filterMessages = (f) => {
-    if (f === "reported") return msgs.filter(m => (m.reports || 0) > 0);
-    if (f === "pinned")   return msgs.filter(m => m.pinned);
+
+  const filtered = useMemo(() => {
+    if (filter === "reported")
+      return msgs.filter((m) => (m.reportCount || 0) > 0);
+
+   
+
     return msgs;
-  };
-  const shown = filterMessages(filter);
-  const paged = shown.slice((page-1)*8, page*8);
+  }, [msgs, filter]);
+
+  const paged = filtered.slice((page - 1) * 8, page * 8);
 
   if (!open || !group) return null;
 
   return (
-    <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={onClose}>
-      <div className="w-full max-w-[680px] max-h-[88vh] flex flex-col rounded-2xl overflow-hidden"
-        style={{ background:"var(--bgCard)", border:"1px solid var(--border)", boxShadow:"0 24px 72px rgba(0,0,0,0.25)" }}
-        onClick={e => e.stopPropagation()}>
+    <div
+      className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-[680px] max-h-[88vh] flex flex-col rounded-2xl overflow-hidden"
+        style={{
+          background: "var(--bgCard)",
+          border: "1px solid var(--border)",
+          boxShadow: "0 24px 72px rgba(0,0,0,0.25)",
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* header */}
+        <div
+          className="flex items-center gap-3 px-5 py-4 border-b flex-shrink-0"
+          style={{ borderColor: "var(--border)" }}
+        >
+          <span className="text-2xl">{group.emoji || "💬"}</span>
 
-        {/* Header */}
-        <div className="flex items-center gap-3 px-5 py-4 border-b flex-shrink-0" style={{ borderColor:"var(--border)" }}>
-          <span className="text-2xl">{group.emoji}</span>
           <div className="flex-1">
-            <div className="font-display font-bold text-[16px] text-[var(--text)]">{group.name}</div>
-            <div className="text-[12px] text-[var(--textMuted)]">{msgs.length} messages · {group.members.length} members</div>
+            <div className="font-display font-bold text-[16px] text-[var(--text)]">
+              {group.name}
+            </div>
+
+            <div className="text-[12px] text-[var(--textMuted)]">
+              {msgs.length} messages · {group.members?.length || 0} members
+            </div>
           </div>
+
           <div className="flex gap-2">
-            {["all","reported","pinned"].map(f => (
-              <button key={f} onClick={() => { setFilter(f); setPage(1); }}
-                className="h-7 px-3 rounded-lg text-[11px] font-semibold border-none cursor-pointer font-sans capitalize"
-                style={{ background:filter===f?"var(--teal)":"var(--bgMuted)", color:filter===f?"#fff":"var(--textMuted)" }}>
+            {["all", "reported"].map((f) => (
+              <button
+                key={f}
+                onClick={() => {
+                  setFilter(f);
+                  setPage(1);
+                }}
+                className="h-7 px-3 rounded-lg text-[11px] font-semibold border-none cursor-pointer capitalize"
+                style={{
+                  background:
+                    filter === f ? "var(--teal)" : "var(--bgMuted)",
+                  color:
+                    filter === f ? "#fff" : "var(--textMuted)",
+                }}
+              >
                 {f}
               </button>
             ))}
           </div>
-          <button onClick={onClose} className="w-7 h-7 rounded-lg flex items-center justify-center text-[var(--textMuted)] hover:bg-[var(--bgMuted)] border-none cursor-pointer bg-transparent">✕</button>
+
+          <button
+            onClick={onClose}
+            className="w-7 h-7 rounded-lg flex items-center justify-center"
+          >
+            ✕
+          </button>
         </div>
 
-        {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-5 space-y-3" style={{ scrollbarWidth:"thin" }}>
+        {/* body */}
+        <div className="flex-1 overflow-y-auto p-5 space-y-3">
           {paged.length === 0 ? (
-            <div className="text-center py-10 text-[13px] text-[var(--textMuted)]">No {filter} messages.</div>
-          ) : paged.map(msg => {
-            const user = getUserById(msg.userId);
-            const reactions = Object.entries(msg.reactions||{});
-            return (
-              <div key={msg.id} className="rounded-xl p-4 group"
-                style={{ background: (msg.reports||0)>0 ? "var(--coralBg)" : "var(--bgMuted)", border:`1px solid ${(msg.reports||0)>0?"var(--coral)20":"var(--border)"}` }}>
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-center gap-2.5 flex-1 min-w-0">
-                    <div className="w-8 h-8 rounded-xl flex items-center justify-center text-[11px] font-bold text-white flex-shrink-0"
-                      style={{ background:[C.teal,C.navy,C.green,C.gold,C.coral][msg.userId%5||0] }}>
-                      {user.name.slice(0,2)}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-semibold text-[13px] text-[var(--text)]">{user.name}</span>
-                        {(msg.reports||0) > 0 && <Badge label={`${msg.reports} reports`} variant="coral"/>}
-                        {msg.pinned && <Badge label="Pinned" variant="gold"/>}
-                        <span className="text-[11px] text-[var(--textMuted)]">{msg.ts}</span>
+            <div className="text-center py-10 text-[13px] text-[var(--textMuted)]">
+              No messages.
+            </div>
+          ) : (
+            paged.map((msg) => {
+   const user = {
+  id: msg.userId,
+  name: msg.userName || "Member",
+  email: msg.userEmail || "",
+};
+
+              return (
+                <div
+                  key={msg.id}
+                  className="rounded-xl p-4 group"
+                  style={{
+                    background:
+                     (msg.reportCount || 0) > 0
+                        ? "var(--coralBg)"
+                        : "var(--bgMuted)",
+                    border: `1px solid ${
+                    (msg.reportCount || 0) > 0
+                        ? "var(--coral)20"
+                        : "var(--border)"
+                    }`,
+                  }}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex gap-3 flex-1 min-w-0">
+                      <div
+                        className="w-8 h-8 rounded-xl flex items-center justify-center text-[11px] font-bold text-white"
+                        style={{
+                          background:
+                           [
+  C.teal,
+  C.navy,
+  C.green,
+  C.gold,
+  C.coral,
+][String(user.id || "").length % 5]
+                        }}
+                      >
+                        {user.name?.slice(0, 2)}
                       </div>
-                      <p className="text-[13px] text-[var(--text)] mt-1 leading-relaxed">{msg.text}</p>
-                      {reactions.length > 0 && (
-                        <div className="flex gap-1.5 mt-2 flex-wrap">
-                          {reactions.map(([em, count]) => (
-                            <span key={em} className="text-[12px] px-2 py-0.5 rounded-full"
-                              style={{ background:"var(--bgCard)", border:"1px solid var(--border)" }}>
-                              {em} {count}
-                            </span>
-                          ))}
+
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="font-semibold text-[13px]">
+                            {user.name}
+                          </span>
+
+                          {
+                          
+                       (msg.reportCount || 0) > 0
+                          
+                          && (
+                            <Badge
+                              label={`${msg.reportCount} reports`}
+                              variant="coral"
+                            />
+                          )}
+
+                     
+
+                          <span className="text-[11px] text-[var(--textMuted)]">
+                            {msg.ts}
+                          </span>
                         </div>
-                      )}
+
+                        <p className="text-[13px] mt-1">
+                          {msg.text}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
-                    <button onClick={() => { onPinMsg(group.id, msg.id); showToast(msg.pinned?"Unpinned.":"Pinned."); }}
-                      className="w-7 h-7 rounded-lg flex items-center justify-center text-[11px] cursor-pointer border-none"
-                      style={{ background:"var(--goldBg)", color:C.gold }} title={msg.pinned?"Unpin":"Pin"}>
-                      📌
-                    </button>
-                    <button onClick={() => { onWarnUser(user); showToast(`Warning sent to ${user.name}.`); }}
-                      className="w-7 h-7 rounded-lg flex items-center justify-center cursor-pointer border-none"
-                      style={{ background:"var(--tealBg)", color:"var(--teal)" }} title="Warn user">
-                      <ShieldCheck size={12}/>
-                    </button>
-                    <button onClick={() => { onDeleteMsg(group.id, msg.id); showToast("Message deleted."); }}
-                      className="w-7 h-7 rounded-lg flex items-center justify-center cursor-pointer border-none"
-                      style={{ background:"var(--coralBg)", color:"var(--coral)" }} title="Delete message">
-                      <Trash2 size={12}/>
-                    </button>
+
+             <div className="flex items-center gap-2 flex-wrap">
+  <Button
+    size="xs"
+    variant="ghost"
+    icon={Flag}
+    onClick={() =>
+      onReportMsg(group.id, msg.id)
+    }
+  >
+    Report
+  </Button>
+
+  <Button
+    size="xs"
+    variant="ghost"
+    icon={ShieldCheck}
+    onClick={() => onWarnUser(user)}
+  >
+    Warn
+  </Button>
+
+<Button
+  size="xs"
+  variant="danger"
+  icon={Trash2}
+  onClick={() =>
+    onDeleteMsg(group.id, msg.id)
+  }
+>
+  Delete
+</Button>
+</div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })
+          )}
         </div>
 
-        {shown.length > 8 && (
-          <div className="px-5 py-3 border-t" style={{ borderColor:"var(--border)" }}>
-            <Pager page={page} total={shown.length} perPage={8} onChange={setPage}/>
+        {filtered.length > 8 && (
+          <div
+            className="px-5 py-3 border-t"
+            style={{ borderColor: "var(--border)" }}
+          >
+            <Pager
+              page={page}
+              total={filtered.length}
+              perPage={8}
+              onChange={setPage}
+            />
           </div>
         )}
       </div>
@@ -137,446 +319,882 @@ const ChatModal = ({ open, onClose, group, messages, onDeleteMsg, onPinMsg, onWa
   );
 };
 
-// ─── Group settings modal ─────────────────────────────────────────
-const GroupSettingsModal = ({ open, onClose, group, onSave, showToast }) => {
-  const [form, setForm] = useState(group ? { name:group.name, description:group.description, type:group.type, messaging:group.messaging, active:group.active!==false } : {});
-  const sf = (k,v) => setForm(f => ({...f,[k]:v}));
-  if (!open || !group) return null;
-  return (
-    <Modal open={open} onClose={onClose} title={`Settings — ${group.name}`} width={480}>
-      <div className="mb-3">
-        <label className="block text-[13px] font-semibold text-[var(--text)] mb-1.5">Group Name</label>
-        <input value={form.name||""} onChange={e=>sf("name",e.target.value)} className="w-full h-11 rounded-xl px-3 text-[13px] font-sans outline-none" style={{ background:"var(--bgMuted)",border:"1.5px solid var(--border)",color:"var(--text)" }}/>
-      </div>
-      <div className="mb-4">
-        <label className="block text-[13px] font-semibold text-[var(--text)] mb-1.5">Description</label>
-        <textarea value={form.description||""} onChange={e=>sf("description",e.target.value)} rows={2} className="w-full rounded-xl px-3 py-2.5 text-[13px] font-sans outline-none resize-none" style={{ background:"var(--bgMuted)",border:"1.5px solid var(--border)",color:"var(--text)" }}/>
-      </div>
-      <div className="grid grid-cols-2 gap-3 mb-4">
-        <Select label="Visibility" value={form.type||"public"} onChange={e=>sf("type",e.target.value)}>
-          <option value="public">Public</option>
-          <option value="private">Private</option>
-        </Select>
-        <Select label="Who can post" value={form.messaging||"all"} onChange={e=>sf("messaging",e.target.value)}>
-          <option value="all">All members</option>
-          <option value="admins_only">Admins only</option>
-        </Select>
-      </div>
-      <div className="flex items-center justify-between p-3 rounded-xl mb-4" style={{ background:"var(--bgMuted)" }}>
-        <div>
-          <div className="text-[13px] font-semibold text-[var(--text)]">Group active</div>
-          <div className="text-[11px] text-[var(--textMuted)]">Inactive groups are hidden from users</div>
-        </div>
-        <Toggle checked={form.active!==false} onChange={v=>sf("active",v)}/>
-      </div>
-      <div className="flex gap-2.5">
-        <Button variant="ghost" onClick={onClose}>Cancel</Button>
-        <Button className="flex-1" onClick={()=>{ onSave(group.id, form); showToast("Group updated."); onClose(); }}>Save Changes</Button>
-      </div>
-    </Modal>
-  );
-};
-
-// ─── Main component ───────────────────────────────────────────────
-// ─── Live Feed sub-component ─────────────────────────────────────
-const LiveFeed = ({ groups, messages, onDelete, showToast }) => {
-  const [feedPage, setFeedPage] = useState(1);
-  const [feedGroup, setFeedGroup] = useState("all");
-  const feedMsgs = Object.entries(messages)
-    .flatMap(([gid, msgs]) => msgs.map(m => ({
-      ...m,
-      groupId:    gid,
-      groupName:  groups.find(g=>g.id===gid)?.name  || gid,
-      groupEmoji: groups.find(g=>g.id===gid)?.emoji || "💬",
-    })))
-    .filter(m => feedGroup === "all" || m.groupId === feedGroup)
-    .sort((a,b) => b.id.localeCompare(a.id));
-  const pagedFeed = feedMsgs.slice((feedPage-1)*PER, feedPage*PER);
-
-  return (
-    <div>
-      <div className="flex items-center gap-3 mb-4">
-        <Select value={feedGroup} onChange={e=>{setFeedGroup(e.target.value);setFeedPage(1);}} className="!mb-0 w-auto">
-          <option value="all">All groups</option>
-          {groups.map(g=><option key={g.id} value={g.id}>{g.emoji} {g.name}</option>)}
-        </Select>
-        <span className="text-[12px] text-[var(--textMuted)]">{feedMsgs.length} messages</span>
-      </div>
-      <Card noPad>
-        <Table
-          cols={[
-            { key:"groupEmoji", label:"Group",
-              render:(_,m)=>(<div className="flex items-center gap-2"><span>{m.groupEmoji}</span><span className="text-[12px] text-[var(--textMuted)]">{m.groupName}</span></div>)
-            },
-            { key:"userId", label:"User",
-              render:(_,m)=>{ const u=getUserById(m.userId); return <span className="font-medium text-[13px] text-[var(--text)]">{u.name}</span>; }
-            },
-            { key:"text", label:"Message",
-              render:v=><span className="text-[12px] text-[var(--textMuted)] truncate block max-w-[280px]">{v||"[Media]"}</span>
-            },
-            { key:"reactions", label:"Reactions",
-              render:v=>{ const t=Object.values(v||{}).reduce((a,b)=>a+b,0); return <span className="text-[12px] text-[var(--textMuted)]">{t>0?`${t} reactions`:"—"}</span>; }
-            },
-            { key:"pinned",  label:"Pinned",  render:v=>v?<Badge label="Pinned" variant="gold"/>:<span className="text-[var(--textFaint)]">—</span> },
-            { key:"reports", label:"Reports", render:v=>v>0?<Badge label={`${v} reports`} variant="coral"/>:<span className="text-[var(--textFaint)]">—</span> },
-            { key:"ts",      label:"Time",    render:v=><span className="text-[12px] text-[var(--textMuted)] whitespace-nowrap">{v}</span> },
-            { key:"id",      label:"",
-              render:(_,m)=>(<Button size="xs" variant="danger" icon={Trash2} onClick={()=>{ onDelete(m.groupId,m.id); showToast("Message deleted."); }}>Del</Button>)
-            },
-          ]}
-          rows={pagedFeed}
-          empty="No messages."
-        />
-        <div className="px-4"><Pager page={feedPage} total={feedMsgs.length} perPage={PER} onChange={setFeedPage}/></div>
-      </Card>
-    </div>
-  );
-};
-
+// ───────────────── main ─────────────────
 export const ACommunityMod = ({ showToast }) => {
-  const groupsApi = useApi(api.community.list, { initial: [] });
-  const groups = (groupsApi.data || []).map(g => ({
-    id: g._id || g.id,
-    slug: g.slug || "",
-    name: g.name || "",
-    type: g.type || "public",
-    description: g.description || "",
-    members: g.members || [],
-    active: g.active !== false,
-    reportCount: g.reportCount || 0,
-    pinned: g.pinned || false,
-  }));
-  const setGroups = (next) => groupsApi.setData(typeof next === "function" ? next(groups) : next);
+  // groups
+const groupsApi = useApi(api.community.adminGroups, { initial: [] });  // messages
+  const allMsgsApi = useApi(api.community.adminAll, {
+    initial: [],
+  });
 
-  const allMsgsApi = useApi(api.community.adminAll, { initial: [] });
-  const messagesByGroup = (allMsgsApi.data || []).reduce((acc, m) => {
-    const gid = m.group || m.groupId || (m.group && m.group._id) || "_none";
-    const ui = {
-      id: m._id || m.id,
-      gid,
-      authorId: m.author?._id || m.author?.id || m.author || 0,
-      author: m.author?.name || "Member",
-      content: m.content || "",
-      reports: m.reports?.length || m.reportCount || 0,
-      pinned: m.pinned || false,
-      createdAt: m.createdAt,
-    };
-    (acc[gid] = acc[gid] || []).push(ui);
-    return acc;
-  }, {});
-  const messages = messagesByGroup;
-  const setMessages = (next) => {
-    // Local-only convenience updates (the underlying live data refreshes via reload())
-    if (typeof next === "function") {
-      const newMap = next(messages);
-      const flat = Object.values(newMap).flat().map(m => ({ ...m, group: m.gid }));
-      allMsgsApi.setData(flat);
-    }
-  };
-  const [tab, setTab]             = useState("overview");
-  const [search, setSearch]       = useState("");
-  const [typeFilter, setTypeFilter] = useState("all");
+  // normalize groups
+const groups = (groupsApi.data || []).map(g => ({
+  id: g._id || g.id,
+  slug: g.slug || "",
+  name: g.name || "",
+  emoji: g.emoji || "💬",
+  coverColor: g.coverColor || C.teal,
+
+  type: g.type || "public",
+  messaging: g.messaging || "all",
+
+  description: g.description || "",
+
+  members: (g.members || []).map(m => ({
+    id: m._id,
+    name: m.name,
+    email: m.email
+  })),
+
+  active: g.active !== false,
+
+  reportCount: g.reportCount || 0,
+
+
+  lastActivity: g.updatedAt
+    ? new Date(g.updatedAt).toLocaleDateString()
+    : "Recently"
+}));
+
+  // normalize messages
+  const messages = useMemo(() => {
+    return (allMsgsApi.data || []).reduce((acc, m) => {
+      const gid =
+        m.group?._id ||
+        m.groupId ||
+        m.group ||
+        "_none";
+
+ const uiMsg = {
+id: m.id || m._id || m.messageId,
+userEmail:
+  m.userEmail ||
+  m.author?.email ||
+  "",
+  groupId:
+    m.groupId ||
+    m.group?._id ||
+    m.group ||
+    "_none",
+
+  userId:
+    m.userId ||
+    m.author?._id ||
+    m.authorId ||
+    0,
+
+  userName:
+    m.userName ||
+    m.author?.name ||
+    "Member",
+
+  text:
+    m.text ||
+    m.content ||
+    "",
+
+  ts:
+    m.ts ||
+    formatDate(m.createdAt),
+
+  createdAt: m.createdAt,
+
+  reactions: m.reactions || {},
+
+  reports: Array.isArray(m.reports) ? m.reports : [],
+reportCount: m.reportCount || 0,
+
+
+};
+
+      if (!acc[gid]) acc[gid] = [];
+
+      acc[gid].push(uiMsg);
+
+      return acc;
+    }, {});
+  }, [allMsgsApi.data]);
+
+  const [tab, setTab] = useState("overview");
   const [chatGroup, setChatGroup] = useState(null);
-  const [settingsGroup, setSettingsGroup] = useState(null);
-  const [deleteId, setDeleteId]   = useState(null);
-  const [page, setPage]           = useState(1);
+  const [search, setSearch] = useState("");
+  const [typeFilter, setTypeFilter] = useState("all");
+  const [page, setPage] = useState(1);
+const [showCreate, setShowCreate] = useState(false);
 
-  // ── derived stats ──────────────────────────────────────────────
-  const allMsgs  = Object.values(messages).flat();
-  const reported = allMsgs.filter(m => (m.reports||0) > 0);
-  const totalMembers = groups.reduce((s,g) => s + g.members.length, 0);
-  const activeGroups = groups.filter(g => g.active !== false);
+const [messagePage, setMessagePage] =useState(1);
+const MESSAGE_PER = 12;
+const [newGroup, setNewGroup] = useState({
+  name: "",
+  description: "",
+  emoji: "💬",
+  type: "public",
+  active: true,
+});
+  // derived
+  const allMsgs = Object.values(messages).flat();
+const reported = allMsgs.filter(
+  (m) => (m.reportCount || 0) > 0
+);
 
-  // ── filtered groups for table ──────────────────────────────────
+  const totalMembers = groups.reduce(
+    (s, g) => s + (g.members?.length || 0),
+    0
+  );
+
+  const activeGroups = groups.filter(
+    (g) => g.active !== false
+  );
+
+  // filtered groups
   const filteredGroups = useMemo(() => {
-    let list = groups;
-    if (typeFilter !== "all") list = list.filter(g => g.type === typeFilter || (typeFilter==="inactive" && g.active===false) || (typeFilter==="active" && g.active!==false));
-    if (search) list = list.filter(g => g.name.toLowerCase().includes(search.toLowerCase()));
+    let list = [...groups];
+
+    if (typeFilter !== "all") {
+      if (typeFilter === "active")
+        list = list.filter((g) => g.active !== false);
+      else if (typeFilter === "inactive")
+        list = list.filter((g) => g.active === false);
+      else list = list.filter((g) => g.type === typeFilter);
+    }
+
+    if (search) {
+      list = list.filter((g) =>
+        g.name
+          .toLowerCase()
+          .includes(search.toLowerCase())
+      );
+    }
+
     return list;
   }, [groups, typeFilter, search]);
 
-  const pagedGroups = filteredGroups.slice((page-1)*PER, page*PER);
+  const pagedGroups = filteredGroups.slice(
+    (page - 1) * PER,
+    page * PER
+  );
+const createGroup = async () => {
+  try {
+    if (!newGroup.name.trim()) {
+      showToast("Group name is required.");
+      return;
+    }
 
-  // ── reported messages across all groups ───────────────────────
-  const reportedWithGroup = allMsgs
-    .filter(m => (m.reports||0) > 0)
-    .map(m => ({
-      ...m,
-      groupId: Object.entries(messages).find(([,msgs]) => msgs.some(x=>x.id===m.id))?.[0],
-      groupName: groups.find(g => Object.keys(messages).find(k=>k===g.id && messages[k].some(x=>x.id===m.id)))?.name || "Unknown",
-      user: getUserById(m.userId),
-    }))
-    .sort((a,b) => (b.reports||0) - (a.reports||0));
-
-  // ── actions ───────────────────────────────────────────────────
-  const deleteMessage = (groupId, msgId) => {
-    setMessages(m => ({...m, [groupId]: (m[groupId]||[]).filter(msg => msg.id !== msgId)}));
-  };
-  const pinMessage = (groupId, msgId) => {
-    setMessages(m => ({...m, [groupId]: (m[groupId]||[]).map(msg => msg.id===msgId ? {...msg, pinned:!msg.pinned} : msg)}));
-  };
-  const dismissReport = (msgId) => {
-    setMessages(m => {
-      const next = {};
-      Object.entries(m).forEach(([k,msgs]) => { next[k] = msgs.map(msg => msg.id===msgId ? {...msg, reports:0} : msg); });
-      return next;
+    await api.community.create({
+      name: newGroup.name,
+      description: newGroup.description,
+      emoji: newGroup.emoji,
+      type: newGroup.type,
+      active: newGroup.active,
     });
-    showToast("Report dismissed.");
-  };
-  const deleteGroup = (id) => {
-    setGroups(gs => gs.filter(g => g.id !== id));
-    setMessages(m => { const n={...m}; delete n[id]; return n; });
-    showToast("Group deleted.");
-  };
-  const updateGroup = (id, patch) => setGroups(gs => gs.map(g => g.id===id ? {...g,...patch} : g));
 
-  // ── tabs ──────────────────────────────────────────────────────
-  const TABS = [
-    { id:"overview",  label:"Overview"                                 },
-    { id:"groups",    label:`All Groups (${groups.length})`            },
-    { id:"reported",  label:`Reported${reported.length>0?` (${reported.length})`:""}`},
-    { id:"messages",  label:"Live Feed"                                },
-  ];
+    await groupsApi.reload();
+
+    setShowCreate(false);
+
+    setNewGroup({
+      name: "",
+      description: "",
+      emoji: "💬",
+      type: "public",
+      active: true,
+    });
+
+    showToast("Group created.");
+  } catch {
+    showToast("Failed to create group.");
+  }
+};
+  // actions
+  const deleteMessage = async (groupId, msgId) => {
+    try {
+   if (api.community.deleteMessage) {
+  await api.community.deleteMessage(groupId, msgId);
+}
+
+      await allMsgsApi.reload();
+
+      showToast("Message deleted.");
+    } catch {
+      showToast("Failed to delete message.");
+    }
+  };
+const reportMessage = async (groupId, msgId) => {
+  try {
+    await api.community.reportMessage(groupId, msgId, {
+      reason: "Admin flagged message",
+    });
+
+    await allMsgsApi.reload();
+
+    showToast("Message reported.");
+  } catch {
+    showToast("Failed to report message.");
+  }
+};
+ 
+
+  const updateGroup = async (id, patch) => {
+    try {
+      if (api.community.update) {
+        await api.community.update(id, patch);
+      }
+
+      await groupsApi.reload();
+
+      showToast("Group updated.");
+    } catch {
+      showToast("Failed to update group.");
+    }
+  };
+const filteredMsgs = allMsgs;
+
+const pagedMsgs = filteredMsgs.slice(
+  (messagePage - 1) * MESSAGE_PER,
+  messagePage * MESSAGE_PER
+);
+
+
+const totalPages = Math.ceil(
+  filteredMsgs.length / MESSAGE_PER
+);
+
+const getPageNumbers = () => {
+  const pages = [];
+
+  if (totalPages <= 7) {
+    return Array.from(
+      { length: totalPages },
+      (_, i) => i + 1
+    );
+  }
+
+  pages.push(1);
+
+  if (messagePage > 3) {
+    pages.push("...");
+  }
+
+  const start = Math.max(2, messagePage - 1);
+  const end = Math.min(
+    totalPages - 1,
+    messagePage + 1
+  );
+
+  for (let i = start; i <= end; i++) {
+    pages.push(i);
+  }
+
+  if (messagePage < totalPages - 2) {
+    pages.push("...");
+  }
+
+  pages.push(totalPages);
+
+  return pages;
+};
+
 
   return (
     <div>
-      {/* Header */}
-      <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
-        <div>
-          <h1 className="font-display font-bold text-xl text-[var(--text)]">Community Management</h1>
-          <p className="text-[13px] text-[var(--textMuted)] mt-0.5">Monitor groups, review reports, manage members and messages.</p>
-        </div>
-        {reported.length > 0 && (
-          <div className="flex items-center gap-2 px-4 py-2 rounded-xl text-[13px] font-semibold animate-pulse"
-            style={{ background:"var(--coralBg)", color:"var(--coral)", border:"1px solid rgba(192,57,43,0.2)" }}>
-            ⚠ {reported.length} reported message{reported.length>1?"s":""} need review
-          </div>
-        )}
-      </div>
+      {/* header */}
+ <div className="flex items-center justify-between mb-5">
+  <div>
+    <h1 className="font-display font-bold text-xl text-[var(--text)]">
+      Community Management
+    </h1>
 
-      {/* Tab bar */}
+    <p className="text-[13px] text-[var(--textMuted)] mt-0.5">
+      Monitor groups, review reports,
+      manage members and messages.
+    </p>
+  </div>
+
+  <Button
+    icon={Plus}
+    onClick={() => setShowCreate(true)}
+  >
+    Add Group
+  </Button>
+</div>
+
+      {/* tabs */}
       <div className="flex bg-[var(--bgCard)] rounded-xl border border-[var(--border)] mb-5 overflow-hidden">
-        {TABS.map(t => (
-          <button key={t.id} onClick={() => setTab(t.id)}
-            className="flex-1 py-2.5 text-[13px] font-semibold border-none cursor-pointer font-sans transition-all"
-            style={{ background:"transparent", color:tab===t.id?"var(--teal)":"var(--textMuted)", borderBottom:tab===t.id?"2px solid var(--teal)":"2px solid transparent" }}>
+        {[
+          {
+            id: "overview",
+            label: "Overview",
+          },
+          {
+            id: "groups",
+            label: `All Groups (${groups.length})`,
+          },
+          {
+            id: "messages",
+            label: "Live Feed",
+          },
+        ].map((t) => (
+          <button
+            key={t.id}
+            onClick={() => setTab(t.id)}
+            className="flex-1 py-2.5 text-[13px] font-semibold"
+            style={{
+              color:
+                tab === t.id
+                  ? "var(--teal)"
+                  : "var(--textMuted)",
+              borderBottom:
+                tab === t.id
+                  ? "2px solid var(--teal)"
+                  : "2px solid transparent",
+            }}
+          >
             {t.label}
           </button>
         ))}
       </div>
 
-      {/* ── Overview ─────────────────────────────────────────── */}
+      {/* overview */}
       {tab === "overview" && (
-        <div>
-          {/* Stats */}
+        <>
           <div className="grid grid-cols-4 gap-4 mb-5">
-            <StatPill label="Total Groups"    value={groups.length}        color={C.teal}/>
-            <StatPill label="Active Groups"   value={activeGroups.length}  color={C.green}/>
-            <StatPill label="Total Members"   value={totalMembers}         color={C.navy}/>
-            <StatPill label="Reported Msgs"   value={reported.length}      color={reported.length > 0 ? C.coral : C.green}/>
-          </div>
-          <div className="grid grid-cols-4 gap-4 mb-5">
-            <StatPill label="Total Messages"  value={allMsgs.length}       color={C.teal}/>
-            <StatPill label="Total Reactions" value={totalReactions(allMsgs)} color={C.gold}/>
-            <StatPill label="Pinned Messages" value={allMsgs.filter(m=>m.pinned).length} color={C.gold}/>
-            <StatPill label="Admins-only Groups" value={groups.filter(g=>g.messaging==="admins_only").length} color={C.navy}/>
+            <StatPill
+              label="Total Groups"
+              value={groups.length}
+              color={C.teal}
+            />
+
+            <StatPill
+              label="Active Groups"
+              value={activeGroups.length}
+              color={C.green}
+            />
+
+            <StatPill
+              label="Total Members"
+              value={totalMembers}
+              color={C.navy}
+            />
+
+            <StatPill
+              label="Reported Msgs"
+              value={reported.length}
+              color={
+                reported.length > 0
+                  ? C.coral
+                  : C.green
+              }
+            />
           </div>
 
-          {/* Group health cards */}
           <div className="grid grid-cols-3 gap-4">
-            {groups.map(g => {
+            {groups.map((g) => {
               const msgs = messages[g.id] || [];
-              const rpts = msgs.filter(m => (m.reports||0)>0).length;
+
               return (
-                <div key={g.id} className="rounded-2xl p-5 border cursor-pointer hover:-translate-y-0.5 transition-all"
-                  style={{ background:"var(--adminCard)", borderColor:rpts>0?"var(--coral)":"var(--border)", borderLeft:`4px solid ${g.coverColor}` }}
-                  onClick={() => { setChatGroup(g); }}>
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center gap-2.5">
-                      <span className="text-2xl">{g.emoji}</span>
-                      <div>
-                        <div className="font-display font-bold text-[14px] text-[var(--text)] leading-tight">{g.name}</div>
-                        <div className="text-[11px] text-[var(--textMuted)] mt-0.5">{g.type} · {g.messaging==="admins_only"?"Admins post":"Open"}</div>
+                <div
+                  key={g.id}
+                  className="rounded-2xl p-5 border cursor-pointer"
+                  style={{
+                    background: "var(--adminCard)",
+                    borderColor: "var(--border)",
+                    borderLeft: `4px solid ${g.coverColor}`,
+                  }}
+                  onClick={() => setChatGroup(g)}
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className="text-2xl">
+                      {g.emoji}
+                    </span>
+
+                    <div>
+                      <div className="font-display font-bold text-[14px]">
+                        {g.name}
+                      </div>
+
+                      <div className="text-[11px] text-[var(--textMuted)]">
+                        {g.type}
                       </div>
                     </div>
-                    <div className="flex flex-col gap-1 items-end">
-                      {g.active===false && <Badge label="Inactive" variant="coral"/>}
-                      {rpts > 0 && <Badge label={`${rpts} reported`} variant="coral"/>}
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-2">
+                    <div
+                      className="rounded-xl py-2 text-center"
+                      style={{
+                        background: "var(--bgMuted)",
+                      }}
+                    >
+                      <div className="font-bold">
+                        {g.members?.length || 0}
+                      </div>
+
+                      <div className="text-[10px]">
+                        members
+                      </div>
+                    </div>
+
+                    <div
+                      className="rounded-xl py-2 text-center"
+                      style={{
+                        background: "var(--bgMuted)",
+                      }}
+                    >
+                      <div className="font-bold">
+                        {msgs.length}
+                      </div>
+
+                      <div className="text-[10px]">
+                        messages
+                      </div>
+                    </div>
+
+                    <div
+                      className="rounded-xl py-2 text-center"
+                      style={{
+                        background: "var(--bgMuted)",
+                      }}
+                    >
+                      <div className="font-bold">
+                        {totalReactions(msgs)}
+                      </div>
+
+                      <div className="text-[10px]">
+                        reactions
+                      </div>
                     </div>
                   </div>
-                  <div className="grid grid-cols-3 gap-2 text-center">
-                    {[
-                      [g.members.length, "members"],
-                      [msgs.length,       "messages"],
-                      [totalReactions(msgs), "reactions"],
-                    ].map(([v,l]) => (
-                      <div key={l} className="py-2 rounded-xl" style={{ background:"var(--bgMuted)" }}>
-                        <div className="font-display font-bold text-[16px] text-[var(--text)]">{v}</div>
-                        <div className="text-[10px] text-[var(--textMuted)]">{l}</div>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="mt-3 text-[11px] text-[var(--textMuted)]">Last activity: {g.lastActivity}</div>
                 </div>
               );
             })}
           </div>
-        </div>
+        </>
       )}
 
-      {/* ── All Groups table ──────────────────────────────────── */}
+      {/* groups */}
       {tab === "groups" && (
-        <div>
-          <div className="flex items-center gap-3 mb-4 flex-wrap">
-            <SearchBar value={search} onChange={v=>{setSearch(v);setPage(1);}} placeholder="Search groups…" className="max-w-[280px] flex-1"/>
-            <Select value={typeFilter} onChange={e=>{setTypeFilter(e.target.value);setPage(1);}} className="!mb-0 w-auto">
-              <option value="all">All groups</option>
+        <>
+          <div className="flex items-center gap-3 mb-4">
+            <SearchBar
+              value={search}
+              onChange={(v) => {
+                setSearch(v);
+                setPage(1);
+              }}
+              placeholder="Search groups…"
+              className="max-w-[280px] flex-1"
+            />
+
+            <Select
+              value={typeFilter}
+              onChange={(e) => {
+                setTypeFilter(e.target.value);
+                setPage(1);
+              }}
+            >
+              <option value="all">All</option>
               <option value="public">Public</option>
               <option value="private">Private</option>
               <option value="active">Active</option>
               <option value="inactive">Inactive</option>
             </Select>
-            <span className="text-[12px] text-[var(--textMuted)] ml-auto">{filteredGroups.length} groups</span>
           </div>
 
           <Card noPad>
             <Table
               cols={[
-                { key:"name", label:"Group",
-                  render:(_,g) => (
+                {
+                  key: "name",
+                  label: "Group",
+
+                  render: (_, g) => (
                     <div className="flex items-center gap-3">
-                      <span className="text-xl flex-shrink-0">{g.emoji}</span>
+                      <span className="text-xl">
+                        {g.emoji}
+                      </span>
+
                       <div>
-                        <div className="font-semibold text-[13px] text-[var(--text)]">{g.name}</div>
-                        <div className="text-[11px] text-[var(--textMuted)] truncate max-w-[200px]">{g.description}</div>
+                        <div className="font-semibold text-[13px]">
+                          {g.name}
+                        </div>
+
+                        <div className="text-[11px] text-[var(--textMuted)]">
+                          {g.description}
+                        </div>
                       </div>
                     </div>
-                  )
+                  ),
                 },
-                { key:"type",      label:"Type",      render:v=><Badge label={v} variant={v==="public"?"teal":"grey"}/> },
-                { key:"messaging", label:"Posting",   render:v=><Badge label={v==="admins_only"?"Admins only":"Open"} variant={v==="admins_only"?"gold":"green"}/> },
-                { key:"members",   label:"Members",   render:(_,g)=><span className="font-semibold text-[13px] text-[var(--text)]">{g.members.length}</span> },
-                { key:"messageCount", label:"Messages", render:(_,g)=>{
-                    const msgs = messages[g.id]||[];
-                    const rpts = msgs.filter(m=>(m.reports||0)>0).length;
-                    return (
-                      <div className="flex items-center gap-2">
-                        <span className="font-semibold text-[13px] text-[var(--text)]">{msgs.length}</span>
-                        {rpts>0 && <Badge label={`${rpts} flagged`} variant="coral"/>}
-                      </div>
-                    );
-                  }
+
+                {
+                  key: "members",
+                  label: "Members",
+
+                  render: (_, g) =>
+                    g.members?.length || 0,
                 },
-                { key:"active", label:"Status",
-                  render:(v,g)=><Toggle checked={g.active!==false} onChange={act=>updateGroup(g.id,{active:act})}/>
+
+                {
+                  key: "active",
+                  label: "Status",
+
+                  render: (_, g) => (
+                    <Toggle
+                      checked={g.active !== false}
+                      onChange={(v) =>
+                        updateGroup(g.id, {
+                          active: v,
+                        })
+                      }
+                    />
+                  ),
                 },
-                { key:"lastActivity", label:"Last Active", render:v=><span className="text-[12px] text-[var(--textMuted)] whitespace-nowrap">{v}</span> },
-                { key:"id", label:"",
-                  render:(_,g) => (
+
+                {
+                  key: "id",
+                  label: "",
+
+                  render: (_, g) => (
                     <div className="flex gap-1">
-                      <Button size="xs" variant="ghost" icon={Eye}      onClick={()=>setChatGroup(g)}>View</Button>
-                      <Button size="xs" variant="ghost" icon={Settings} onClick={()=>setSettingsGroup(g)}>Edit</Button>
-                      <Button size="xs" variant="danger" icon={Trash2}  onClick={()=>setDeleteId(g.id)}>Del</Button>
+                      <Button
+                        size="xs"
+                        variant="ghost"
+                        icon={Eye}
+                        onClick={() =>
+                          setChatGroup(g)
+                        }
+                      >
+                        View
+                      </Button>
+                      <Button
+  size="xs"
+  variant="danger"
+  icon={Trash2}
+  onClick={async () => {
+    await api.community.delete(g.id);
+    await groupsApi.reload();
+    showToast("Group deleted.");
+  }}
+>
+  Delete
+</Button>
                     </div>
-                  )
+                  ),
                 },
               ]}
               rows={pagedGroups}
               empty="No groups found."
             />
-            <div className="px-4"><Pager page={page} total={filteredGroups.length} perPage={PER} onChange={setPage}/></div>
+
+            <div className="px-4">
+              <Pager
+                page={page}
+                total={filteredGroups.length}
+                perPage={PER}
+                onChange={setPage}
+              />
+            </div>
           </Card>
-        </div>
+        </>
       )}
 
-      {/* ── Reported Messages ─────────────────────────────────── */}
-      {tab === "reported" && (
-        <div>
-          {reportedWithGroup.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20 text-center">
-              <div className="text-5xl mb-4">✅</div>
-              <div className="font-display font-bold text-lg text-[var(--text)] mb-2">No reported messages</div>
-              <p className="text-[14px] text-[var(--textMuted)]">All messages are within community guidelines.</p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {reportedWithGroup.map(m => (
-                <div key={m.id} className="rounded-2xl p-5 border-l-4"
-                  style={{ background:"var(--adminCard)", border:"1px solid var(--border)", borderLeftColor:"var(--coral)" }}>
-                  <div className="flex items-start justify-between gap-4 flex-wrap">
-                    <div className="flex-1 min-w-0">
-                      {/* Meta */}
-                      <div className="flex items-center gap-2.5 mb-2 flex-wrap">
-                        <div className="w-8 h-8 rounded-xl flex items-center justify-center text-[11px] font-bold text-white flex-shrink-0"
-                          style={{ background:[C.teal,C.navy,C.green,C.gold,C.coral][m.userId%5||0] }}>
-                          {m.user.name.slice(0,2)}
-                        </div>
-                        <span className="font-bold text-[13px] text-[var(--text)]">{m.user.name}</span>
-                        <Badge label={`${m.reports} reports`} variant="coral"/>
-                        <span className="text-[11px] px-2 py-0.5 rounded-lg" style={{ background:"var(--bgMuted)", color:"var(--textMuted)" }}>
-                          in {m.groupName}
-                        </span>
-                        <span className="text-[11px] text-[var(--textMuted)]">{m.ts}</span>
-                      </div>
-                      {/* Content */}
-                      <div className="p-3 rounded-xl text-[13px] text-[var(--text)] leading-relaxed mb-2"
-                        style={{ background:"var(--bgMuted)" }}>
-                        {m.text || <em className="text-[var(--textFaint)]">[Media message]</em>}
-                      </div>
+      {/* messages */}
+   {tab === "messages" && (
+  <Card className="p-5">
+    <div className="flex items-center justify-between mb-4">
+      <div className="font-semibold text-[15px]">
+        Live Message Feed
+      </div>
+
+      <div className="text-[13px] text-[var(--textMuted)]">
+        Total Messages: {allMsgs.length}
+      </div>
+    </div>
+
+    <div className="space-y-3">
+      {pagedMsgs.length === 0 ? (
+        <div className="text-center py-10 text-[13px] text-[var(--textMuted)]">
+          No messages found.
+        </div>
+      ) : (
+        pagedMsgs.map((msg) => {
+          const group = groups.find(
+            (g) => g.id === msg.groupId
+          );
+
+          return (
+            <div
+              key={msg.id}
+              className="rounded-xl p-4 border"
+              style={{
+                background:
+                  (msg.reportCount || 0) > 0
+                    ? "var(--coralBg)"
+                    : "var(--bgMuted)",
+
+                borderColor:
+                  (msg.reportCount || 0) > 0
+                    ? "var(--coral)"
+                    : "var(--border)",
+              }}
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex gap-3 flex-1">
+                  <div
+                    className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-[12px]"
+                    style={{
+                      background: group?.coverColor || C.teal,
+                    }}
+                  >
+                    {msg.userName?.slice(0, 2)}
+                  </div>
+
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-semibold text-[13px]">
+                        {msg.userName}
+                      </span>
+
+                      <Badge
+                        label={group?.name || "Unknown Group"}
+                        variant="teal"
+                      />
+
+                      {(msg.reportCount || 0) > 0 && (
+                        <Badge
+                          label={`${msg.reportCount} reports`}
+                          variant="coral"
+                        />
+                      )}
+
+                      <span className="text-[11px] text-[var(--textMuted)]">
+                        {msg.ts}
+                      </span>
                     </div>
-                    {/* Actions */}
-                    <div className="flex gap-2 flex-shrink-0 flex-wrap">
-                      <Button size="sm" variant="ghost" onClick={()=>dismissReport(m.id)}>Dismiss</Button>
-                      <Button size="sm" variant="ghost" icon={ShieldCheck}
-                        onClick={()=>showToast(`Warning sent to ${m.user.name}.`)}>Warn</Button>
-                      <Button size="sm" variant="danger" icon={Trash2}
-                        onClick={()=>{ deleteMessage(m.groupId, m.id); showToast("Message deleted."); }}>
-                        Delete
-                      </Button>
-                      <Button size="sm" variant="secondary" icon={UserX}
-                        onClick={()=>showToast(`${m.user.name} removed from group.`)}>
-                        Remove User
-                      </Button>
-                    </div>
+
+                    <p className="text-[13px] mt-1 break-words">
+                      {msg.text}
+                    </p>
                   </div>
                 </div>
-              ))}
+
+                <div className="flex items-center gap-2">
+                  <Button
+                    size="xs"
+                    variant="ghost"
+                    icon={Flag}
+                    onClick={() =>
+                      reportMessage(
+                        msg.groupId,
+                        msg.id
+                      )
+                    }
+                  >
+                    Report
+                  </Button>
+
+                  <Button
+                    size="xs"
+                    variant="danger"
+                    icon={Trash2}
+                    onClick={() =>
+                      deleteMessage(
+                        msg.groupId,
+                        msg.id
+                      )
+                    }
+                  >
+                    Delete
+                  </Button>
+                </div>
+              </div>
             </div>
-          )}
-        </div>
+          );
+        })
       )}
-
-      {/* ── Live Feed ─────────────────────────────────────────── */}
-      {tab === "messages" && (
-        <LiveFeed groups={groups} messages={messages} onDelete={deleteMessage} showToast={showToast}/>
+      <div className="mt-5">
+<div className="flex items-center justify-center mt-5">
+  <div className="text-[12px] text-[var(--textMuted)]">
+    Showing{" "}
+    <span className="font-semibold">
+      {(messagePage - 1) * MESSAGE_PER + 1}
+    </span>
+    -
+    <span className="font-semibold">
+      {Math.min(
+        messagePage * MESSAGE_PER,
+        filteredMsgs.length
       )}
+    </span>{" "}
+    of{" "}
+    <span className="font-semibold">
+      {filteredMsgs.length}
+    </span>{" "}
+    messages
+  </div>
 
-      {/* ── Modals ──────────────────────────────────────────────── */}
+  <div className="flex items-center gap-1">
+    {/* prev */}
+    <button
+      disabled={messagePage === 1}
+      onClick={() =>
+        setMessagePage((p) => Math.max(p - 1, 1))
+      }
+      className="h-8 px-3 rounded-lg border text-[12px] font-medium disabled:opacity-40"
+      style={{
+        borderColor: "var(--border)",
+        background: "var(--bgCard)",
+      }}
+    >
+      Prev
+    </button>
+
+    {/* numbers */}
+    {Array.from(
+      {
+        length: Math.ceil(
+          filteredMsgs.length / MESSAGE_PER
+        ),
+      },
+      (_, i) => i + 1
+    ).map((p) => (
+      <button
+        key={p}
+        onClick={() => setMessagePage(p)}
+        className="w-8 h-8 rounded-lg text-[12px] font-semibold"
+        style={{
+          background:
+            p === messagePage
+              ? "var(--teal)"
+              : "var(--bgCard)",
+
+          color:
+            p === messagePage
+              ? "#fff"
+              : "var(--text)",
+
+          border:
+            p === messagePage
+              ? "none"
+              : "1px solid var(--border)",
+        }}
+      >
+        {p}
+      </button>
+    ))}
+
+    {/* next */}
+    <button
+      disabled={
+        messagePage ===
+        Math.ceil(
+          filteredMsgs.length / MESSAGE_PER
+        )
+      }
+      onClick={() =>
+        setMessagePage((p) =>
+          Math.min(
+            p + 1,
+            Math.ceil(
+              filteredMsgs.length / MESSAGE_PER
+            )
+          )
+        )
+      }
+      className="h-8 px-3 rounded-lg border text-[12px] font-medium disabled:opacity-40"
+      style={{
+        borderColor: "var(--border)",
+        background: "var(--bgCard)",
+      }}
+    >
+      Next
+    </button>
+  </div>
+</div>
+</div>
+    </div>
+  </Card>
+)}
+
+<Modal
+  open={showCreate}
+  onClose={() => setShowCreate(false)}
+  title="Create Group"
+>
+  <div className="space-y-4">
+    <Input
+      label="Group Name"
+      value={newGroup.name}
+      onChange={(e) =>
+        setNewGroup((s) => ({
+          ...s,
+          name: e.target.value,
+        }))
+      }
+    />
+
+    <Input
+      label="Description"
+      value={newGroup.description}
+      onChange={(e) =>
+        setNewGroup((s) => ({
+          ...s,
+          description: e.target.value,
+        }))
+      }
+    />
+
+    <Input
+      label="Emoji"
+      value={newGroup.emoji}
+      onChange={(e) =>
+        setNewGroup((s) => ({
+          ...s,
+          emoji: e.target.value,
+        }))
+      }
+    />
+
+    <Select
+      value={newGroup.type}
+      onChange={(e) =>
+        setNewGroup((s) => ({
+          ...s,
+          type: e.target.value,
+        }))
+      }
+    >
+      <option value="public">Public</option>
+      <option value="private">Private</option>
+    </Select>
+
+    <div className="flex justify-end gap-2 pt-2">
+      <Button
+        variant="ghost"
+        onClick={() => setShowCreate(false)}
+      >
+        Cancel
+      </Button>
+
+      <Button onClick={createGroup}>
+        Create
+      </Button>
+    </div>
+  </div>
+</Modal>
+      {/* modal */}
       <ChatModal
         open={!!chatGroup}
-        onClose={()=>setChatGroup(null)}
+        onClose={() => setChatGroup(null)}
         group={chatGroup}
         messages={messages}
         onDeleteMsg={deleteMessage}
-        onPinMsg={pinMessage}
-        onWarnUser={u=>showToast(`Warning sent to ${u.name}.`)}
+
+        onWarnUser={(u) =>
+          showToast(`Warning sent to ${u.name}.`)
+        }
+        onReportMsg={reportMessage}
         showToast={showToast}
-      />
-      <GroupSettingsModal
-        open={!!settingsGroup}
-        onClose={()=>setSettingsGroup(null)}
-        group={settingsGroup}
-        onSave={updateGroup}
-        showToast={showToast}
-      />
-      <Confirm
-        open={!!deleteId}
-        onClose={()=>setDeleteId(null)}
-        title="Delete Group?"
-        message="This permanently deletes the group and all its messages. This cannot be undone."
-        danger
-        confirmLabel="Delete Group"
-        onConfirm={()=>deleteGroup(deleteId)}
       />
     </div>
   );

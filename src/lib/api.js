@@ -80,10 +80,27 @@ const users = {
   exportCSV: ()          => `${BASE_URL}/api/users/export/csv`,
 };
 
+const insights = {
+  today:        () => get('/api/insights/today'),
+
+  list:         (params)   => get('/api/insights', params),
+
+  create:       (body)     => post('/api/insights', body),
+
+  bulkCreate:   (rows)     => post('/api/insights/bulk', { rows }),
+
+  update:       (id, body) => patch(`/api/insights/${id}`, body),
+
+  delete:       (id)       => del(`/api/insights/${id}`),
+
+  rotate:       ()         => post('/api/insights/cron/rotate'),
+};
+
 // ── Community ─────────────────────────────────────────────────
 const community = {
   // Groups
   list:          (params)         => get('/api/community', params),
+  adminGroups: (params) => get('/api/community/admin/groups', params),
   get:           (id)             => get(`/api/community/${id}`),
   create:        (body)           => post('/api/community', body),
   update:        (id, body)       => patch(`/api/community/${id}`, body),
@@ -104,6 +121,26 @@ const community = {
   adminReported: ()               => get('/api/community/admin/reported'),
   adminDismiss:  (msgId)          => post(`/api/community/admin/messages/${msgId}/dismiss`),
   adminFeed:     (params)         => get('/api/community/admin/feed', params),
+  reportMessage: (id, msgId, body = {}) =>
+  post(`/api/community/${id}/messages/${msgId}/report`, body),
+
+reportChannel: (id, body = {}) =>
+  post(`/api/community/channels/${id}/report`, body),
+  // Admin Moderation
+adminDeleteMessage: (groupId, msgId) =>
+  del(`/api/community/${groupId}/messages/${msgId}`),
+
+adminPinMessage: (groupId, msgId) =>
+  post(`/api/community/${groupId}/messages/${msgId}/pin`),
+
+adminDeleteGroup: (groupId) =>
+  del(`/api/community/${groupId}`),
+
+adminUpdateGroup: (groupId, body) =>
+  patch(`/api/community/${groupId}`, body),
+
+adminRemoveMember: (groupId, userId) =>
+  del(`/api/community/${groupId}/members/${userId}`),
 };
 
 // ── Content ───────────────────────────────────────────────────
@@ -206,6 +243,6 @@ const notifications = {
 };
 // ── Export ────────────────────────────────────────────────────
 export const api = {
-  setToken, getToken, clearToken,notifications,
+  setToken, getToken, clearToken,notifications,insights,
   auth, users, community, content, communications, scheduler, admin,
 };

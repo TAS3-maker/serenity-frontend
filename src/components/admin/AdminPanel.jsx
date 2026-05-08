@@ -6,7 +6,8 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useToast } from "../../hooks/index";
 import { useTheme } from "../../ThemeContext";
-
+import { useApi } from "../../lib/useApi";
+import { api } from "../../lib/api";
 // Layout
 import { AdminSidebar } from "./layout/Sidebar";
 import { AdminTopbar }  from "./layout/Topbar";
@@ -25,7 +26,7 @@ import { AUsers }      from "./Users";
 import { APrograms }   from "./Programs";
 import { AScheduler }  from "./Scheduler";
 import { AAdminManage } from "./AdminManage";
-
+import Insights from "./Insights";
 // Content pages (barrel)
 import { AQuestions, ABlog, AMemberships, ACommunityMod } from "./Content";
 
@@ -42,6 +43,7 @@ const SEC_LABELS = {
   programs:     "Programs",
   questions:    "Assessment Questions",
   blog:         "Blog & Comments",
+  insights:     "Daily Insights",
   memberships:  "Memberships & Pricing",
   community:    "Community Moderation",
   templates:    "Email Templates",
@@ -70,7 +72,13 @@ export const AdminPanel = ({ onLogout }) => {
   const setSec = (s) => navigate(`/admin/${s}`);
 
   const p = { showToast };
+const {
+  data: currentAdmin,
+} = useApi(api.auth.adminMe, {
+  initial: null,
 
+  select: (r) => r?.user,
+});
   const renderSection = () => {
     switch (sec) {
       case "dashboard":     return <ADashboard />;
@@ -88,6 +96,7 @@ export const AdminPanel = ({ onLogout }) => {
       case "admin_manage":  return <AAdminManage {...p} />;
       case "email_cfg":     return <AEmailConfig {...p} />;
       case "stripe":        return <AStripeConfig {...p} />;
+     case "insights":      return <Insights {...p} />;
       case "settings":       return <AGeneral {...p} />;
       case "faq":           return <AFaqManager {...p} />;
       case "qr":            return <AQRManager {...p} />;
@@ -107,7 +116,12 @@ export const AdminPanel = ({ onLogout }) => {
       <div className="flex flex-1 overflow-hidden">
         {/* Desktop sidebar */}
         <div className="w-[215px] flex-shrink-0 overflow-hidden flex flex-col admin-side">
-          <AdminSidebar sec={sec} setSec={setSec} onLogout={onLogout}/>
+        <AdminSidebar
+  sec={sec}
+  setSec={setSec}
+  onLogout={onLogout}
+  admin={currentAdmin}
+/>
         </div>
 
         {/* Mobile overlay */}
@@ -115,8 +129,15 @@ export const AdminPanel = ({ onLogout }) => {
           <>
             <div onClick={() => setMobileNav(false)} className="fixed inset-0 bg-black/50 z-[500]"/>
             <div className="fixed top-0 left-0 bottom-0 w-60 z-[600] flex flex-col overflow-hidden">
-              <AdminSidebar sec={sec} setSec={setSec} onLogout={onLogout} onCloseMobile={() => setMobileNav(false)}/>
-            </div>
+<AdminSidebar
+  sec={sec}
+  setSec={setSec}
+  onLogout={onLogout}
+  admin={currentAdmin}
+  onCloseMobile={() =>
+    setMobileNav(false)
+  }
+/>            </div>
           </>
         )}
 

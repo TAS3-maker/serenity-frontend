@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { Plus, Download, Upload, Pencil, Trash2 } from "../../../lib/icons";
 import { api } from "../../../lib/api";
 import { profileLabel, MISSION_TYPES } from "../../../lib/constants";
@@ -70,33 +70,119 @@ const CsvPop = ({ open, onClose, existing, onImport }) => {
 
 // ─── Action form popup ─────────────────────────────────────────
 const ActionPop = ({ open, onClose, initial, actions, onSave }) => {
-  const BLANK = { day:"", title:"", profile:"all", type:"reflection", duration:"3", body:"" };
-  const [form, setForm] = useState(initial ? {...initial, day:String(initial.day), duration:String(initial.duration)} : BLANK);
-  const set = (k,v) => setForm(f => ({...f,[k]:v}));
+  const BLANK = {
+    day: "",
+    title: "",
+    profile: "all",
+    type: "reflection",
+    duration: "3",
+    body: "",
+  };
+
+  const [form, setForm] = useState(BLANK);
+
+  useEffect(() => {
+    if (initial) {
+      setForm({
+       day: initial.meta?.day !== undefined
+  ? String(initial.meta.day)
+  : "",
+        title: initial.title || "",
+        profile: initial.profile || "all",
+        type: initial.type || "reflection",
+        duration: String(initial.duration || 3),
+        body: initial.body || "",
+      });
+    } else {
+      setForm(BLANK);
+    }
+  }, [initial, open]);
+
+  const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
+
   if (!open) return null;
+
   return (
-    <Modal open={open} onClose={onClose} title={initial?"Edit Action":"Add Action"} width={520}>
+    <Modal
+      open={open}
+      onClose={onClose}
+      title={initial ? "Edit Action" : "Add Action"}
+      width={520}
+    >
       <div className="grid grid-cols-2 gap-3">
-        <Input label="Day *"    type="number" value={form.day}      onChange={e=>set("day",e.target.value)}  placeholder="1–30"/>
-        <Select label="Profile" value={form.profile} onChange={e=>set("profile",e.target.value)}>
-          <option value="all">All Profiles</option><option value="avoider">Avoider</option><option value="anxious">Anxious Manager</option><option value="silent">Silent Stressor</option>
+        <Input
+          label="Day *"
+          type="number"
+          value={form.day}
+          onChange={(e) => set("day", e.target.value)}
+          placeholder="1–30"
+        />
+
+        <Select
+          label="Profile"
+          value={form.profile}
+          onChange={(e) => set("profile", e.target.value)}
+        >
+          <option value="all">All Profiles</option>
+          <option value="avoider">Avoider</option>
+          <option value="anxious">Anxious Manager</option>
+          <option value="silent">Silent Stressor</option>
         </Select>
-        <Select label="Type" value={form.type} onChange={e=>set("type",e.target.value)}>
-          {MISSION_TYPES.map(t=><option key={t} value={t} className="capitalize">{t}</option>)}
+
+        <Select
+          label="Type"
+          value={form.type}
+          onChange={(e) => set("type", e.target.value)}
+        >
+          {MISSION_TYPES.map((t) => (
+            <option key={t} value={t} className="capitalize">
+              {t}
+            </option>
+          ))}
         </Select>
-        <Input label="Duration (min)" type="number" value={form.duration} onChange={e=>set("duration",e.target.value)}/>
+
+        <Input
+          label="Duration (min)"
+          type="number"
+          value={form.duration}
+          onChange={(e) => set("duration", e.target.value)}
+        />
       </div>
-      <Input label="Mission Title *" value={form.title} onChange={e=>set("title",e.target.value)}/>
+
+      <Input
+        label="Mission Title *"
+        value={form.title}
+        onChange={(e) => set("title", e.target.value)}
+      />
+
       <div className="mb-3.5">
-        <label className="block text-[13px] font-semibold text-[var(--text)] mb-1.5">Mission Body</label>
-        <textarea value={form.body} onChange={e=>set("body",e.target.value)} rows={4}
+        <label className="block text-[13px] font-semibold text-[var(--text)] mb-1.5">
+          Mission Body
+        </label>
+
+        <textarea
+          value={form.body}
+          onChange={(e) => set("body", e.target.value)}
+          rows={4}
           className="w-full rounded-xl p-3 text-[13px] font-sans bg-[var(--bgCard)] text-[var(--text)] resize-y outline-none"
-          style={{ border:"1.5px solid var(--border)" }}/>
+          style={{ border: "1.5px solid var(--border)" }}
+        />
       </div>
+
       <div className="flex gap-2.5 mt-2">
-        <Button variant="ghost" onClick={onClose}>Cancel</Button>
-        <Button className="flex-1" onClick={()=>{ if(!form.day||!form.title){return;} onSave(form); onClose(); }}>
-          {initial?"Update":"Add Action"}
+        <Button variant="ghost" onClick={onClose}>
+          Cancel
+        </Button>
+
+        <Button
+          className="flex-1"
+          onClick={() => {
+            if (!form.day || !form.title) return;
+            onSave(form);
+            onClose();
+          }}
+        >
+          {initial ? "Update" : "Add Action"}
         </Button>
       </div>
     </Modal>
@@ -117,7 +203,7 @@ export const ActionLibrary = ({ actions, setActions, showToast }) => {
     body:     form.body,
     profile:  form.profile,
     audience: form.profile,
-    channel:  "push",
+    channel:  "inapp",
     type:     form.type,
     duration: Number(form.duration) || 3,
     day:      Number(form.day),
@@ -170,7 +256,7 @@ export const ActionLibrary = ({ actions, setActions, showToast }) => {
   const importRows = async (rows) => {
     try {
       await api.scheduler.actionImport(rows.map(r => ({
-        name: r.title, title: r.title, body: r.body || "",
+        name: r.title,  channel: "inapp", title: r.title, body: r.body || "",
         profile: r.profile || "all", audience: r.profile || "all",
         type: r.type || "reflection", duration: Number(r.duration) || 3,
         day: Number(r.day), active: true,
