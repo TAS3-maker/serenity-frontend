@@ -10,7 +10,7 @@ import googleplay from "../assets/googleplay.png";
 export default function DecodingSection() {
   return (
 
-   <section className="bg-[#F3F5F4] py-6 md:py-8 lg:py-12 px-3 md:px-4 font-jost" id="app-download">
+   <section className="bg-[#F3F5F4] py-6 md:py-8 lg:py-12 px-3 md:px-4 font-jost" id="app-download2">
          
          <div className="w-full lg:max-w-[1130px] mx-auto flex flex-col lg:flex-row items-center lg:items-start gap-8 md:gap-10">
            

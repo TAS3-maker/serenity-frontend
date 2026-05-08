@@ -5,27 +5,19 @@ const tabs = [
     id: "aligned",
     label: "Serenity Aligned™",
     title: "The Human Story",
-    content: `You’ve tried budgeting. You’ve tried tracking. You’ve read the books. 
-And you still find yourself in the same loop avoiding the account, checking it obsessively, 
-or carrying the weight of it in silence.
-
-Serenity Aligned™ is built for that specific gap: the space between knowing what to do 
-and actually being able to do it. It doesn’t tell you what to do with your money. 
-It works on why you do what you already do.`,
+    content: `You’ve tried budgeting. You’ve tried tracking. You’ve read the books. And you still find yourself in the same loop avoiding the account, checking it obsessively, or carrying the weight of it in silence. Serenity Aligned™ is built for that specific gap: the space between knowing what to do and actually being able to do it. It doesn’t tell you what to do with your money. It works on why you do what you already do.`,
   },
   {
     id: "decoding",
     label: "Decoding Money Serenity™",
     title: "Decoding Your Patterns",
-    content: `This section explains how your money behavior forms patterns.
-We help you decode emotional triggers and financial habits.`,
+    content: `This section explains how your money behavior forms patterns. We help you decode emotional triggers and financial habits.`,
   },
   {
     id: "aarav",
     label: "AARAV The Serenity Genie™",
     title: "Your AI Companion",
-    content: `AARAV helps you stay consistent by guiding you with smart nudges 
-and personalized insights.`,
+    content: `AARAV helps you stay consistent by guiding you with smart nudges and personalized insights.`,
   },
 ];
 
@@ -57,7 +49,7 @@ export default function SerenityTabs() {
           <button
             onClick={() => {
               document
-                .getElementById("app-download")
+                .getElementById("app-download1")
                 ?.scrollIntoView({ behavior: "smooth" });
             }}
             className="my-4 bg-[#0D7377] text-xl font-medium text-white px-5 py-2 rounded-lg hover:bg-teal-600 transition"

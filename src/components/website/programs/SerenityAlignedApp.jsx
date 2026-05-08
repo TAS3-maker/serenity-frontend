@@ -74,7 +74,7 @@ const AppSection = () => {
        <button
   onClick={() => {
     document
-      .getElementById("app-download1")
+      .getElementById("app-download2")
       ?.scrollIntoView({ behavior: "smooth" });
   }}
   className="mt-6 md:mt-12 bg-[#0D7377] text-white px-3 md:px-6 py-2 rounded-lg text-sm md:text-lg lg:text-xl font-medium w-full sm:w-auto"

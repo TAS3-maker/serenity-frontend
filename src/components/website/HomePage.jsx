@@ -371,7 +371,7 @@ const Profiles = () => (
             <button
               onClick={() => {
                 document
-                  .getElementById("app-download2")
+                  .getElementById("app-download")
                   ?.scrollIntoView({ behavior: "smooth" });
               }}
               className="mt-auto w-fit px-3 md:px-4 py-2 text-xs md:text-sm rounded-lg bg-[var(--teal)] text-white"
@@ -459,7 +459,7 @@ const Process = ({ profiles = [] }) => (
         <button
           onClick={() => {
             document
-              .getElementById("app-download2")
+              .getElementById("app-download")
               ?.scrollIntoView({ behavior: "smooth" });
           }}
           className="px-4 md:px-6 py-2 md:py-2.5 rounded-lg bg-[var(--teal)] text-white text-sm md:text-base font-semibold hover:opacity-90 transition"
@@ -532,7 +532,7 @@ const IKISDW = ({ showToast }) => {
           <button
             onClick={() =>
               document
-                .getElementById("app-download2")
+                .getElementById("app-download")
                 ?.scrollIntoView({ behavior: "smooth" })
             }
             className="px-4 md:px-6 py-2 md:py-2.5 rounded-lg bg-[var(--teal)] text-white text-sm md:text-base font-semibold hover:opacity-90 transition"
@@ -629,7 +629,7 @@ const AaravSection = () => {
         <button
           onClick={() =>
             document
-              .getElementById("app-download2")
+              .getElementById("app-download")
               ?.scrollIntoView({ behavior: "smooth" })
           }
           className="mt-8 md:mt-12 bg-teal-700 text-white px-4 md:px-6 py-2 rounded-full text-sm md:text-base shadow-md hover:opacity-90"
@@ -645,7 +645,7 @@ const DecodingSection = () => {
   return (
     <section
       className="bg-[#F3F5F4] py-6 md:py-8 lg:py-12 px-3 md:px-4 font-jost"
-      id="app-download2"
+      id="app-download"
     >
       <div className="w-full lg:max-w-[1130px] mx-auto flex flex-col lg:flex-row items-center lg:items-start gap-8 md:gap-10">
         {/* Left */}

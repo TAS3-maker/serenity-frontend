@@ -64,7 +64,7 @@ useEffect(() => {
               SERENITYDECODED JOURNAL
             </p>
             {/* Main Heading */}
-            <h1 className="text-5xl font-bold font-jost text-gray-900 leading-snug w-full m-auto max-w-5xl">
+            <h1 className="text-5xl font-bold font-jost text-gray-900 leading-[1.1] w-full m-auto max-w-5xl">
               The psychology of <br />
               <span className="text-[#0D7377]">financial calm.</span>
             </h1>

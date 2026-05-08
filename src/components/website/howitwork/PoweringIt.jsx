@@ -103,7 +103,7 @@ export default function PoweringSection() {
             <button
               onClick={() => {
                 document
-                  .getElementById("app-download")
+                  .getElementById("app-download1")
                   ?.scrollIntoView({ behavior: "smooth" });
               }}
               className="mt-4 md:mt-6 bg-[#0D7377] text-sm md:text-lg lg:text-xl font-medium text-white px-4 md:px-5 py-2 rounded-lg"
