@@ -110,15 +110,6 @@ const navigate=useNavigate()
        
             </div>
 
-
-
-
-
-
-
-
-
-
             {/* Right Section */}
             <div className="w-3/5 h-full hidden lg:block relative" >
   {/* Background image */}

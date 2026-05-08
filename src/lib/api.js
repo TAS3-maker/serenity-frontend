@@ -8,7 +8,7 @@
  *   const { data: users } = await api.users.list({ page: 1, perPage: 10 });
  */
 
-const BASE_URL = "http://localhost:5001"
+const BASE_URL = "https://serenity-backend-f409.onrender.com"
 
 // ── Token store ───────────────────────────────────────────────
 // SECURITY NOTE

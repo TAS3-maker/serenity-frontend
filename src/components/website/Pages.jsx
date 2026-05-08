@@ -72,6 +72,7 @@ export const WebPrograms = ({ showToast }) => {
   );
 };
 
+
 // ─── About ──────────────────────────────────────────────────────
 const DEFAULT_TEAM = [
   { name:"Dr. Aisha Bell",  role:"Chief Psychologist",  bio:"Clinical psychologist with 14 years specialising in financial anxiety and avoidance behaviours.", accent:"teal"  },

@@ -50,17 +50,18 @@ const navigate=useNavigate()
     <div className="flex relative flex-col md:flex-row h-screen bg-white text-white no-scrollbar overflow-hidden">
             {/* Left Section */}
 
-<div className="absolute m-3">
-    <img
+
+<div className="absolute mt-8 md:mt-12 lg:m-3 left-1/2 -translate-x-1/2 md:left-1/2 md:-translate-x-1/2 lg:left-auto lg:translate-x-0 ">
+  <img
     src={finalLogo}
     alt="Illustration"
-    className=" object-cover rounded-3xl"
+    className="object-cover rounded-3xl"
   />
 </div>
 
           
-            <div  className="lg:w-2/4 w-full flex flex-col items-center justify-center p-3 md:p-6" >
-                <div className="bg-white text-black p-10 rounded-lg min-w-full max-w-md">
+            <div  className="lg:w-2/4 w-full flex flex-col items-center justify-center p-3 md:p-6 mt-28 md:mt-0" >
+                <div className="bg-white text-black py-10 px-5 md:px-20 rounded-lg min-w-full max-w-md">
              
                     {/* Dynamic Name */}
                     <h1 className="text-2xl flex justify-center items-center font-bold mb-2 text-left ">

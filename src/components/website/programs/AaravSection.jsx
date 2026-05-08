@@ -1,53 +1,80 @@
-import checkicon from "../assets/checkicon.svg"
+// Program Section 3
 
-
+import checkicon from "../assets/checkicon.svg";
 
 const AaravSection = () => {
   return (
-    <section className="py-12 px-4 bg-[#F3F5F4]">
+    <section className="py-6 md:py-8 lg:py-12 px-3 bg-[#F3F5F4]">
       <div className="max-w-5xl mx-auto text-center">
-        <h2 className="text-2xl md:text-5xl font-bold mb-14">
+        <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold mb-8 md:mb-12 lg:mb-14">
           AARAV The <span className="text-[#0D7377]">Serenity Genie™</span>
         </h2>
 
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
           {/* Left Card */}
-          <div className="bg-[#FFFFFF] shadow-[0px_0px_20.9px_0px_#00000040] rounded-xl p-6 text-left">
-            <h3 className="font-normal mb-4 text-2xl text-[#0D7377]">What Aarav does:</h3>
-            <ul className="space-y-3 text-xl font-normal text-[#898989]">
+          <div className="bg-[#FFFFFF] shadow-[0px_0px_20.9px_0px_#00000040] rounded-xl p-4 md:p-6 text-left">
+            <h3 className="font-normal mb-3 md:mb-4 text-lg md:text-xl lg:text-2xl text-[#0D7377]">
+              What Aarav does:
+            </h3>
+
+            <ul className="space-y-2 md:space-y-3 text-sm md:text-lg lg:text-xl font-normal text-[#898989]">
               {[
                 "Responds based on your stress profile",
                 "Uses the SerenityDecoded™ framework",
                 "Available 24/7 (web + in-app)",
                 "Focuses on emotions, not financial advice",
               ].map((item, i) => (
-                <li key={i} className="flex gap-2">
-                  <div className="bg-[#0D7377] w-8 h-8 rounded-lg p-1"><img src={checkicon} alt="" width="100%" heigth="100%" /></div> {item}
+                <li key={i} className="flex gap-2 items-start">
+                  <div className="bg-[#0D7377] w-6 h-6 md:w-8 md:h-8 rounded-lg p-1 flex-shrink-0">
+                    <img
+                      src={checkicon}
+                      alt=""
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  {item}
                 </li>
               ))}
             </ul>
           </div>
 
           {/* Right Card */}
-          <div className="bg-[#FFFFFF] shadow-[0px_0px_20.9px_0px_#00000040] rounded-xl p-6 text-left">
-            <h3 className="font-normal mb-4 text-2xl text-[#0D7377]">What you'll get:</h3>
-            <ul className="space-y-3 text-xl font-normal text-[#898989]">
+          <div className="bg-[#FFFFFF] shadow-[0px_0px_20.9px_0px_#00000040] rounded-xl p-4 md:p-6 text-left">
+            <h3 className="font-normal mb-3 md:mb-4 text-lg md:text-xl lg:text-2xl text-[#0D7377]">
+              What you'll get:
+            </h3>
+
+            <ul className="space-y-2 md:space-y-3 text-sm md:text-lg lg:text-xl font-normal text-[#898989]">
               {[
                 "Support during anxious or avoidant moments",
                 "Faster pattern recognition",
                 "Reduced sense of isolation",
                 "Clarity without being told what to do",
               ].map((item, i) => (
-                <li key={i} className="flex gap-2">
-                  <div className="bg-[#0D7377] w-8 h-8 rounded-lg p-1"><img src={checkicon} alt="" width="100%" heigth="100%" /></div> {item}
+                <li key={i} className="flex gap-2 items-start">
+                  <div className="bg-[#0D7377] w-6 h-6 md:w-8 md:h-8 rounded-lg p-1 flex-shrink-0">
+                    <img
+                      src={checkicon}
+                      alt=""
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  {item}
                 </li>
               ))}
             </ul>
           </div>
         </div>
 
-        <button className="mt-8 bg-[#0D7377] text-white px-6 py-2 rounded-lg text-xl font-medium">
-          Meet Aarav — No sign-up required  
+        <button
+          onClick={() => {
+            document
+              .getElementById("app-download2")
+              ?.scrollIntoView({ behavior: "smooth" });
+          }}
+          className="mt-6 md:mt-12 bg-[#0D7377] text-white px-4 md:px-6 py-2 rounded-lg text-sm md:text-lg lg:text-xl font-medium"
+        >
+          Meet Aarav — No sign-up required
         </button>
       </div>
     </section>
