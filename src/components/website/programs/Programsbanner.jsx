@@ -1,3 +1,4 @@
+// Program Section 1 
 import { useState } from "react";
 
 export default function SerenityTabs() {
@@ -5,7 +6,7 @@ export default function SerenityTabs() {
     <section className="w-full pb-6 md:pb-8 lg:pb-16 px-3 bg-[#F3F5F4]">
       <div className="mx-auto text-center">
         <div className="pt-6 md:pt-8">
-          <p className="text-[#0D7377] font-medium font-jost text-lg md:text-xl lg:text-xl mb-2">
+          <p className="text-[#0D7377] font-medium font-jost text-lg md:text-xl mb-2">
             The SerenityDecoded™ Ecosystem
           </p>
 

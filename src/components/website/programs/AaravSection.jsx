@@ -1,3 +1,5 @@
+// Program Section 3
+
 import checkicon from "../assets/checkicon.svg";
 
 const AaravSection = () => {
@@ -64,7 +66,14 @@ const AaravSection = () => {
           </div>
         </div>
 
-        <button className="mt-6 md:mt-8 bg-[#0D7377] text-white px-4 md:px-6 py-2 rounded-lg text-sm md:text-lg lg:text-xl font-medium">
+        <button
+          onClick={() => {
+            document
+              .getElementById("app-download")
+              ?.scrollIntoView({ behavior: "smooth" });
+          }}
+          className="mt-6 md:mt-12 bg-[#0D7377] text-white px-4 md:px-6 py-2 rounded-lg text-sm md:text-lg lg:text-xl font-medium"
+        >
           Meet Aarav — No sign-up required
         </button>
       </div>

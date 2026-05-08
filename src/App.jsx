@@ -10,7 +10,7 @@ import { AdminLogin, AdminPanel,ForgetPassword,NewPassword,ResetPassword } from 
 import { api } from "./lib/api";
 import WaitListLayout from "./components/website/waitlist/WaitListLayout";
 import ContactLayout from "./components/website/ContactUs/ContactLayout";
-
+import Paymentpage from "./components/website/Payment";
 // ─── Auth ──────────────────────────────────────────────────────
 // We avoid storing any auth-related data in sessionStorage / localStorage to
 // stay XSS-safe. The actual auth token lives in an httpOnly cookie (`sd_token`)
@@ -18,6 +18,7 @@ import ContactLayout from "./components/website/ContactUs/ContactLayout";
 // /api/auth/admin/me on mount. The `authedRef` below is just an in-memory
 // optimistic flag set right after a successful login so the first render
 // after navigation doesn't bounce back to /admin/login.
+
 let _adminAuthed = false;
 const setAuthed  = (v) => { _adminAuthed = !!v; };
 const RequireAuth = ({ children }) => {
@@ -147,7 +148,6 @@ export default function App() {
       <div className="fixed inset-0">
         <Routes>
           <Route path="/"               element={<WebsiteLayout />} />
-          {/* <Route path="/waiting-list"   element={<WebsiteLayout />} /> */}
           <Route path="/how-it-works"   element={<WebsiteLayout />} />
           <Route path="/programs"       element={<WebsiteLayout />} />
           <Route path="/blog"           element={<WebsiteLayout />} />
@@ -159,6 +159,8 @@ export default function App() {
           <Route path="/admin"          element={<Navigate to="/admin/dashboard" replace />} />
           <Route path="/admin/:section" element={<AdminRoute />} />
           <Route path="*"               element={<Navigate to="/" replace />} />
+          <Route path="/payment"        element={<Paymentpage />} />
+          
         </Routes>
       </div>
     </BrowserRouter>

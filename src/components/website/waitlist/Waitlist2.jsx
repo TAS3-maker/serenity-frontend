@@ -6,7 +6,7 @@ import book from "../assets/book.png";
 export default function BookSection() {
   return (
     
-<section className="bg-white py-10 md:py-20 px-3 md:px-4 font-jost">
+<section className="bg-white py-6 md:py-10 lg:py-14 px-3 md:px-6 font-jost">
   <div className="w-full lg:max-w-6xl mx-auto flex flex-col lg:flex-row items-center lg:items-start">
     
     {/* Left - 60% */}
@@ -31,7 +31,7 @@ export default function BookSection() {
     </div> 
 
     {/* Right - 40% */}
-    <div className="w-full lg:w-[45%] flex justify-center">
+    <div className="w-full lg:w-[45%] flex justify-center pt-6 md:pt-10">
       <img
         src={book}
         alt=""

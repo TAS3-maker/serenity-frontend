@@ -81,7 +81,7 @@ export const Stars = ({ n = 5 }) => (
 );
 
 // ─── Avatar stack ───────────────────────────────────────────────
-export const AvatarStack = ({ initials = ["SM","MT","PR","EV","JW"], count = "1,284 enrolled" }) => (
+export const AvatarStack = ({ initials = ["SM","MT","PR","EV","JW"], count = "1,284+" }) => (
   <div className="flex items-center gap-3">
     <div className="flex -space-x-2">
       {initials.map((i) => (

@@ -1,3 +1,5 @@
+// Program Section 2 
+
 import checkicon from "../assets/checkicon.svg";
 
 const AppSection = () => {
@@ -69,9 +71,16 @@ const AppSection = () => {
           </div>
         </div>
 
-        <button className="mt-5 md:mt-6 bg-[#0D7377] text-white px-4 md:px-6 py-2 rounded-lg text-sm md:text-lg lg:text-xl font-medium w-full sm:w-auto">
-          Start your practice — Download Serenity Aligned™
-        </button>
+       <button
+  onClick={() => {
+    document
+      .getElementById("app-download1")
+      ?.scrollIntoView({ behavior: "smooth" });
+  }}
+  className="mt-6 md:mt-12 bg-[#0D7377] text-white px-3 md:px-6 py-2 rounded-lg text-sm md:text-lg lg:text-xl font-medium w-full sm:w-auto"
+>
+  Start your practice — Download Serenity Aligned™
+</button>
       </div>
     </section>
   );
