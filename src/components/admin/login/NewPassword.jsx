@@ -4,7 +4,7 @@ import { api } from "../../../lib/api";
 
 import forgetPassword from "../../../assets/forgetPassword.png";
 import rectangle from "../../../assets/rectangle.png";
-import finalLogo from "../../../assets/finalLogo.png";
+import finalLogo from "../../../assets/finalLogo.svg";
 
 export const NewPassword = ({ onSuccess, onBack }) => {
   const navigate = useNavigate();

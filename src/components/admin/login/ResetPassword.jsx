@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { api } from "../../../lib/api";
 import resetPass from "../../../assets/resetPass.png";
 import rectangle from "../../../assets/rectangle.png";
-import finalLogo from "../../../assets/finalLogo.png";
+import finalLogo from "../../../assets/finalLogo.svg";
 import { useNavigate, useLocation } from "react-router-dom";
 
 export const ResetPassword = () => {

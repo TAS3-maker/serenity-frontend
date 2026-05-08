@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { useTheme } from "../../ThemeContext";
 import { ThemeToggle } from "../ui/index";
 import { C } from "../../tokens";
-import finalLogo from "../../assets/logoFooter.png";
-import headerLogo from "../../assets/finalLogo.png";
+import finalLogo from "../../assets/logoFooter.svg";
+import headerLogo from "../../assets/finalLogo.svg";
 
 export const WebNav = ({ active, onNav }) => {
   const [scrolled, setScrolled] = useState(false);

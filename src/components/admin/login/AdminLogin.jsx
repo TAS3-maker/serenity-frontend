@@ -5,7 +5,7 @@ import { AInp } from "../AdminShared";
 import { api } from "../../../lib/api";
 import logo from "../../../assets/logo.png"
 import rectangle from "../../../assets/rectangle.png"
-import finalLogo from "../../../assets/finalLogo.png"
+import finalLogo from "../../../assets/finalLogo.svg"
 import { useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 

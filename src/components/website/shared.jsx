@@ -89,7 +89,7 @@ export const AvatarStack = ({ initials = ["SM","MT","PR","EV","JW"], count = "1,
           style={{ background: `linear-gradient(135deg,${C.teal},${C.green})` }}>{i}</div>
       ))}
     </div>
-    <span className="text-sm text-[var(--textMuted)] font-medium">{count}</span>
+    <span className="text-[16px] text-[var(--textMuted)] text-black font-semibold">{count}</span>
   </div>
 );
 
