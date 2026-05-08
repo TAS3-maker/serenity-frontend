@@ -60,7 +60,7 @@ const WebsiteLayout = () => {
   const active = pathMap[location.pathname] || "home";
 
   const onNav = (key) => {
-    const routeMap = { home: "/", howitworks: "/how-it-works", programs: "/programs", blog: "/blog", about: "/about", admin: "/admin/login", book:"/book", contact:"contact"};
+    const routeMap = { home: "/", howitworks: "/how-it-works", programs: "/programs", blog: "/blog", about: "/about", admin: "/admin/login", book:"/book", contact:"/contact"};
     navigate(routeMap[key] || "/");
     if (scrollRef.current) scrollRef.current.scrollTop = 0;
   };
