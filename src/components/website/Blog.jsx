@@ -5,15 +5,25 @@ import phone from "./assets/decodingphn.png";
 import qr from "./assets/scannercode.png";
 import appstore from "./assets/appstore.png";
 import googleplay from "./assets/googleplay.png";
-const TABS = [
-  "All",
-  "Behavioral Psychology",
-  "Behavioral Science",
-  "Stress Profiles",
-  "Research",
-];
+import Ellipse from "./assets/Ellipse 1.png";
+
+// const TABS = [
+//   "All",
+//   "Behavioral Psychology",
+//   "Behavioral Science",
+//   "Stress Profiles",
+//   "Research",
+// ];
+
+// const tabs = [
+//   "All",
+//   ...new Set(articles.map((item) => item.category)),
+// ];
+
+
 export const WebBlog = ({ showToast }) => {
   const [activeTab, setActiveTab] = useState("All");
+  const [activeArticle, setActiveArticle] = useState(null);
   const {
   data: articles = [],
   loading,
@@ -24,8 +34,10 @@ export const WebBlog = ({ showToast }) => {
     initial: [],
     select: (raw) => {
       const blogs = raw?.items ?? raw?.data ?? raw ?? [];
+
       return blogs.map((item) => ({
-        category: item.category || "Research",
+        id: item._id,
+        category: item.tag || "Research",
         time: item.readTime || "5 min read",
         title: item.title || "",
         desc:
@@ -44,6 +56,16 @@ export const WebBlog = ({ showToast }) => {
     },
   }
 );
+
+  const tabs = [
+    "All",
+    ...new Set(articles.map((item) => item.category)),
+  ];
+
+  const currentArticle = articles.find(
+  (item) => item.id === activeArticle
+);
+
 useEffect(() => {
   if (error && showToast) {
     showToast("Failed to load blogs");
@@ -54,6 +76,285 @@ useEffect(() => {
     activeTab === "All"
       ? articles
       : articles.filter((item) => item.category === activeTab);
+
+if (currentArticle) {
+  const relatedArticles = articles
+    .filter((item) => item.id !== currentArticle.id)
+    .slice(0, 2);
+
+  return (
+    <div className="bg-[#F3F5F4] min-h-screen">
+
+      {/* Reading Progress */}
+      <div className="fixed top-0 left-0 right-0 h-[3px] bg-[#d9d9d9] z-[200]">
+        <div className="h-full w-[40%] bg-[#0D7377]" />
+      </div>
+
+      {/* HERO */}
+      <section className="relative overflow-hidden bg-[#0B1F33] min-h-[520px]">
+
+        {/* Background Gradient */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(13,115,119,0.25),transparent_60%)]" />
+
+        {/* Grid Overlay */}
+        <div
+          className="absolute inset-0 opacity-20"
+          style={{
+            backgroundImage:
+              "repeating-linear-gradient(0deg,rgba(255,255,255,0.03) 0px,rgba(255,255,255,0.03) 1px,transparent 1px,transparent 60px), repeating-linear-gradient(90deg,rgba(255,255,255,0.03) 0px,rgba(255,255,255,0.03) 1px,transparent 1px,transparent 60px)",
+          }}
+        />
+
+        <div className="relative z-10 max-w-6xl mx-auto px-4 py-16">
+
+          {/* Back Button */}
+          <button
+            onClick={() => setActiveArticle(null)}
+            className="text-white/60 hover:text-white transition mb-10"
+          >
+            ← Back to Blogs
+          </button>
+
+          {/* Meta */}
+          <div className="flex flex-wrap items-center gap-4 mb-6">
+
+            <span className="bg-[#0D7377]/20 border border-[#0D7377]/40 text-[#6abbaa] px-4 py-2 rounded-full text-sm font-semibold">
+              {currentArticle.category}
+            </span>
+
+            <div className="flex items-center gap-5 text-white/50 text-sm">
+              <span>{currentArticle.date}</span>
+              <span>{currentArticle.time}</span>
+            </div>
+          </div>
+
+          {/* Title */}
+          <h1 className="text-white font-bold leading-[1.1] text-4xl md:text-6xl max-w-4xl mb-6">
+            {currentArticle.title}
+          </h1>
+
+          {/* Excerpt */}
+          <p className="text-white/60 text-lg leading-8 max-w-3xl">
+            {currentArticle.desc}
+          </p>
+        </div>
+
+        {/* Bottom Fade */}
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-b from-transparent to-[#F3F5F4]" />
+      </section>
+
+      {/* ARTICLE BODY */}
+      <section className="py-16">
+        <div className="max-w-6xl mx-auto px-4 grid lg:grid-cols-[1fr_280px] gap-16">
+
+          {/* MAIN CONTENT */}
+          <article>
+
+            {/* Quote */}
+            <div className="relative border-l-4 border-[#0D7377] pl-8 mb-10">
+
+              <div className="absolute -left-[14px] top-0 w-7 h-7 rounded-full bg-[#0D7377] text-white flex items-center justify-center text-lg">
+                "
+              </div>
+
+              <p className="italic text-2xl text-[#111] leading-[1.8]">
+                {currentArticle.desc}
+              </p>
+            </div>
+
+            {/* Body */}
+            <div className="space-y-7">
+              {(currentArticle.desc || "")
+                .split("\n\n")
+                .map((para, i) => (
+                  <p
+                    key={i}
+                    className="text-[18px] text-[#5E5E5E] leading-[2]"
+                  >
+                    {para}
+                  </p>
+                ))}
+            </div>
+
+            {/* Key Takeaways */}
+            <div className="mt-14 bg-[#EAF6F5] border border-[#CDE7E5] rounded-3xl p-8">
+
+              <p className="uppercase tracking-[3px] text-sm text-[#0D7377] font-bold mb-5">
+                Key Takeaways
+              </p>
+
+              <div className="space-y-4">
+
+                {[
+                  "Awareness changes financial behavior patterns.",
+                  "Stress around money is often psychological, not mathematical.",
+                  "Consistency matters more than perfection.",
+                ].map((item, i) => (
+                  <div key={i} className="flex items-start gap-3">
+
+                    <div className="w-5 h-5 rounded-full bg-[#0D7377] flex items-center justify-center mt-1">
+                      <svg
+                        width="10"
+                        height="10"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="#fff"
+                        strokeWidth="3"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M20 6L9 17l-5-5" />
+                      </svg>
+                    </div>
+
+                    <p className="text-[#111] leading-7">
+                      {item}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* CTA */}
+            <div className="mt-14 rounded-3xl overflow-hidden">
+
+              <div className="relative bg-gradient-to-r from-[#0D7377] to-[#1E7145] p-10">
+
+                <div
+                  className="absolute inset-0 opacity-20"
+                  style={{
+                    backgroundImage:
+                      "repeating-linear-gradient(45deg,rgba(255,255,255,0.05) 0px,rgba(255,255,255,0.05) 1px,transparent 1px,transparent 40px)",
+                  }}
+                />
+
+                <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+
+                  <div>
+                    <h3 className="text-white text-3xl font-bold mb-3">
+                      Ready to put this into practice?
+                    </h3>
+
+                    <p className="text-white/70 max-w-2xl leading-7">
+                      Take the free Financial Stress Assessment and receive
+                      personalized insights.
+                    </p>
+                  </div>
+
+                  <button className="bg-white text-[#0D7377] px-8 h-12 rounded-xl font-semibold hover:scale-[1.03] transition">
+                    Start Free →
+                  </button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          {/* SIDEBAR */}
+          <aside className="hidden lg:block">
+
+            <div className="sticky top-24 space-y-5">
+
+              {/* Share */}
+              <div className="bg-white border border-[#dcdcdc] rounded-2xl p-5">
+
+                <p className="uppercase tracking-[3px] text-xs text-[#898989] font-bold mb-4">
+                  Share Article
+                </p>
+
+                <div className="space-y-3">
+
+                  {[
+                    "Copy link",
+                    "Share on X",
+                    "Share on LinkedIn",
+                  ].map((btn, i) => (
+                    <button
+                      key={i}
+                      className="w-full h-10 rounded-xl border border-[#dcdcdc] hover:bg-[#F3F5F4] transition text-sm"
+                    >
+                      {btn}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Reading */}
+              <div className="bg-white border border-[#dcdcdc] rounded-2xl p-5">
+
+                <p className="uppercase tracking-[3px] text-xs text-[#898989] font-bold mb-4">
+                  Reading Time
+                </p>
+
+                <p className="text-[#111] font-semibold">
+                  {currentArticle.time}
+                </p>
+              </div>
+
+              {/* Category */}
+              <div className="bg-white border border-[#dcdcdc] rounded-2xl p-5">
+
+                <p className="uppercase tracking-[3px] text-xs text-[#898989] font-bold mb-4">
+                  Filed Under
+                </p>
+
+                <span className="bg-[#EAF6F5] border border-[#CDE7E5] text-[#0D7377] px-4 py-2 rounded-full text-sm font-semibold">
+                  {currentArticle.category}
+                </span>
+              </div>
+            </div>
+          </aside>
+        </div>
+
+        {/* RELATED ARTICLES */}
+        {relatedArticles.length > 0 && (
+          <div className="max-w-6xl mx-auto px-4 pt-16 border-t border-[#dcdcdc] mt-16">
+
+            <h2 className="text-3xl font-bold text-[#111] mb-8">
+              More from the journal
+            </h2>
+
+            <div className="grid md:grid-cols-2 gap-6">
+
+              {relatedArticles.map((item) => (
+                <div
+                  key={item.id}
+                  onClick={() => setActiveArticle(item.id)}
+                  className="bg-white border border-[#dcdcdc] rounded-3xl p-7 cursor-pointer hover:-translate-y-1 hover:shadow-xl transition"
+                >
+                  <span className="text-[#0D7377] text-sm font-semibold uppercase">
+                    {item.category}
+                  </span>
+
+                  <h3 className="text-2xl font-bold text-[#111] mt-3 mb-3 leading-snug hover:text-[#0D7377] transition">
+                    {item.title}
+                  </h3>
+
+                  <p className="text-[#898989] leading-7 mb-6 line-clamp-2">
+                    {item.desc}
+                  </p>
+
+                  <div className="flex items-center justify-between border-t border-[#e5e5e5] pt-5">
+
+                    <span className="text-[#898989] text-sm">
+                      {item.date}
+                    </span>
+
+                    <span className="text-[#0D7377] font-semibold">
+                      Read →
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </section>
+    </div>
+  );
+}
+
+
+
   return (
     <div>
       <section className="w-full pb-16 bg-[#F3F5F4]">
@@ -79,17 +380,17 @@ useEffect(() => {
       {/* ---------- Tabs ---------- */}
       <div className="border-t border-[#898989] bg-[#F3F5F4] pt-4">
         <div className="flex w-full max-w-4xl m-auto justify-between gap-8 overflow-x-auto">
-          {TABS.map((tab) => (
+          {tabs.map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className="relative pb-3 text-sm whitespace-nowrap"
+              className="relative  pb-3 text-xl whitespace-nowrap"
             >
               <span
                 className={`${
                   activeTab === tab
-                    ? "text-teal-700 font-medium"
-                    : "text-gray-500"
+                    ? "text-[#0D7377] font-normal"
+                    : "text-[#898989] font-normal"
                 }`}
               >
                 {tab}
@@ -126,9 +427,12 @@ useEffect(() => {
                 <span className="text-[#898989] text-xl font-medium ">
                   Mar 14, 2026
                 </span>
-                <button className="text-[#1C7C80] text-xl font-medium hover:underline">
-                  Read article
-                </button>
+                <button
+                    onClick={() => setActiveArticle(articles[0]?.id)}
+                    className="text-[#1C7C80] text-xl font-medium hover:underline"
+                  >
+                    Read article
+                  </button>
               </div>
             </div>
           </div>
@@ -171,7 +475,10 @@ useEffect(() => {
                     {item.date}
                   </span>
 
-                  <button className="text-[#1C7C80] font-medium text-base hover:underline">
+                  <button
+                    onClick={() => setActiveArticle(item.id)}
+                    className="text-[#1C7C80] font-medium text-base hover:underline"
+                  >
                     Read article
                   </button>
                 </div>
