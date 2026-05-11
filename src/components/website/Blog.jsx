@@ -7,19 +7,6 @@ import appstore from "./assets/appstore.png";
 import googleplay from "./assets/googleplay.png";
 import Ellipse from "./assets/Ellipse 1.png";
 
-// const TABS = [
-//   "All",
-//   "Behavioral Psychology",
-//   "Behavioral Science",
-//   "Stress Profiles",
-//   "Research",
-// ];
-
-// const tabs = [
-//   "All",
-//   ...new Set(articles.map((item) => item.category)),
-// ];
-
 
 export const WebBlog = ({ showToast }) => {
   const [activeTab, setActiveTab] = useState("All");
@@ -71,7 +58,7 @@ useEffect(() => {
     showToast("Failed to load blogs");
   }
 }, [error, showToast]);
-  // ── Filter Blogs ────────────────────────────────────
+ 
   const filteredArticles =
     activeTab === "All"
       ? articles
