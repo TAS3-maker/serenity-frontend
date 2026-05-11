@@ -5,7 +5,6 @@ import phone from "./assets/decodingphn.png";
 import qr from "./assets/scannercode.png";
 import appstore from "./assets/appstore.png";
 import googleplay from "./assets/googleplay.png";
-import Ellipse from "./assets/Ellipse 1.png";
 
 
 export const WebBlog = ({ showToast }) => {
