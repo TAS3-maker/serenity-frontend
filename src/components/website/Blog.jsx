@@ -5,11 +5,13 @@ import phone from "./assets/decodingphn.png";
 import qr from "./assets/scannercode.png";
 import appstore from "./assets/appstore.png";
 import googleplay from "./assets/googleplay.png";
+import { useNavigate } from "react-router-dom";
 
 
 export const WebBlog = ({ showToast }) => {
   const [activeTab, setActiveTab] = useState("All");
   const [activeArticle, setActiveArticle] = useState(null);
+  const navigate = useNavigate();
   const {
   data: articles = [],
   loading,
@@ -57,7 +59,7 @@ useEffect(() => {
     showToast("Failed to load blogs");
   }
 }, [error, showToast]);
- 
+  // ── Filter Blogs ────────────────────────────────────
   const filteredArticles =
     activeTab === "All"
       ? articles
@@ -227,7 +229,13 @@ if (currentArticle) {
                     </p>
                   </div>
 
-                  <button className="bg-white text-[#0D7377] px-8 h-12 rounded-xl font-semibold hover:scale-[1.03] transition">
+                  {/* <button className="bg-white text-[#0D7377] px-8 h-12 rounded-xl font-semibold hover:scale-[1.03] transition">
+                    Start Free →
+                  </button> */}
+                  <button
+                    onClick={() => navigate("/programs#app-download2")}
+                    className="bg-white text-[#0D7377] px-4 w-full max-w-32 h-12 rounded-xl font-semibold hover:scale-[1.03] transition"
+                  >
                     Start Free →
                   </button>
                 </div>
@@ -247,21 +255,54 @@ if (currentArticle) {
                   Share Article
                 </p>
 
-                <div className="space-y-3">
+               <div className="space-y-3">
 
-                  {[
-                    "Copy link",
-                    "Share on X",
-                    "Share on LinkedIn",
-                  ].map((btn, i) => (
-                    <button
-                      key={i}
-                      className="w-full h-10 rounded-xl border border-[#dcdcdc] hover:bg-[#F3F5F4] transition text-sm"
-                    >
-                      {btn}
-                    </button>
-                  ))}
-                </div>
+  {/* Copy Link */}
+  <button
+    onClick={() => {
+      navigator.clipboard.writeText(window.location.href);
+
+      if (showToast) {
+        showToast("Link copied!");
+      }
+    }}
+    className="w-full h-10 rounded-xl border border-[#dcdcdc] hover:bg-[#F3F5F4] transition text-sm"
+  >
+    Copy link
+  </button>
+
+  {/* Share on X */}
+  <button
+    onClick={() => {
+      const text = encodeURIComponent(currentArticle.title);
+      const url = encodeURIComponent(window.location.href);
+
+      window.open(
+        `https://twitter.com/intent/tweet?text=${text}&url=${url}&via=SerenityDecoded`,
+        "_blank"
+      );
+    }}
+    className="w-full h-10 rounded-xl border border-[#dcdcdc] hover:bg-[#F3F5F4] transition text-sm"
+  >
+    Share on X
+  </button>
+
+  {/* Share on LinkedIn */}
+  <button
+    onClick={() => {
+      const url = encodeURIComponent(window.location.href);
+
+      window.open(
+        `https://www.linkedin.com/sharing/share-offsite/?url=${url}`,
+        "_blank"
+      );
+    }}
+    className="w-full h-10 rounded-xl border border-[#dcdcdc] hover:bg-[#F3F5F4] transition text-sm"
+  >
+    Share on LinkedIn
+  </button>
+
+</div>
               </div>
 
               {/* Reading */}
@@ -305,8 +346,9 @@ if (currentArticle) {
                 <div
                   key={item.id}
                   onClick={() => setActiveArticle(item.id)}
-                  className="bg-white border border-[#dcdcdc] rounded-3xl p-7 cursor-pointer hover:-translate-y-1 hover:shadow-xl transition"
+                  className="bg-white flex flex-col justify-between border border-[#dcdcdc] rounded-3xl p-7 cursor-pointer hover:-translate-y-1 hover:shadow-xl transition"
                 >
+                  <div>
                   <span className="text-[#0D7377] text-sm font-semibold uppercase">
                     {item.category}
                   </span>
@@ -318,6 +360,7 @@ if (currentArticle) {
                   <p className="text-[#898989] leading-7 mb-6 line-clamp-2">
                     {item.desc}
                   </p>
+                  </div>
 
                   <div className="flex items-center justify-between border-t border-[#e5e5e5] pt-5">
 
