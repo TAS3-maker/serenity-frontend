@@ -824,81 +824,178 @@ const CommunitySection = () => {
   );
 };
 
-const NewsletterSection = () => {
-  return (
-    <section className="bg-[#f4f6f6] py-6 md:py-8 lg:py-12 px-3 md:px-4">
-      <div className="max-w-6xl mx-auto">
-        {/* Heading */}
-        <div className="text-center">
-          <h1 className="text-2xl md:text-4xl lg:text-5xl font-jost font-bold leading-snug">
-            The psychology of financial calm,
-            <br />
-            <span className="text-teal-700">delivered weekly.</span>
-          </h1>
+const NewsletterSection = ({ showToast }) => {
+const [form, setForm] = useState({
+firstName: "",
+lastName: "",
+email: "",
+phone: "",
+message: "",
+});
 
-          <p className="text-sm md:text-lg lg:text-xl text-[#898989] mt-4 md:mt-5 font-jost max-w-3xl mx-auto">
-            One email. Every week. Psychology-backed insights on financial
-            stress, behaviour patterns, and what it actually takes to feel
-            calmer about money. No noise. No pitch. Just the framework, applied.
-          </p>
-        </div>
+const [loading, setLoading] = useState(false);
 
-        {/* Content */}
-        <div className="grid grid-cols-1 md:grid-cols-[40%_60%] lg:grid-cols-2 gap-6 md:gap-4 lg:gap-2 mt-6 md:mt-10 items-center">
-          {/* Image */}
-          <div className="flex justify-center px-2 md:px-0">
-            <img
-              src={GroupNewsLetter}
-              alt="newsletter"
-              className="w-40 sm:w-56 md:w-full max-w-[420px]"
-            />
-          </div>
+const handleChange = (e) => {
+setForm({
+...form,
+[e.target.name]: e.target.value,
+});
+};
 
-          {/* Form */}
-          <div className="px-2 md:pl-4 md:pr-6 lg:px-0">
-            <div className="bg-white p-4 md:p-6 rounded-xl shadow-xl w-full max-w-md md:max-w-[520px] mx-auto md:mx-0">
-              <form className="space-y-4">
-                <div>
-                  <label className="text-xs md:text-sm text-gray-500">
-                    First Name
-                  </label>
-                  <input className="w-full mt-1 px-3 md:px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-700" />
-                </div>
+const handleSubmit = async (e) => {
+e.preventDefault();
 
-                <div>
-                  <label className="text-xs md:text-sm text-gray-500">
-                    Last Name
-                  </label>
-                  <input className="w-full mt-1 px-3 md:px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-700" />
-                </div>
 
-                <div>
-                  <label className="text-xs md:text-sm text-gray-500">
-                    Email Address
-                  </label>
-                  <input
-                    type="email"
-                    className="w-full mt-1 px-3 md:px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-700"
-                  />
-                </div>
+if (!form.firstName || !form.email || !form.phone) {
+  showToast("Please fill all required fields", "error");
+  return;
+}
 
-                <div>
-                  <label className="text-xs md:text-sm text-gray-500">
-                    Phone Number
-                  </label>
-                  <input className="w-full mt-1 px-3 md:px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-700" />
-                </div>
+try {
+  setLoading(true);
 
-                <button className="w-full md:w-40 bg-teal-700 text-white py-2 rounded-md hover:opacity-90 text-sm md:text-base">
-                  Submit
-                </button>
-              </form>
+  await api.contact.submit({
+    firstName: form.firstName,
+    lastName: form.lastName,
+    email: form.email,
+    phone: form.phone,
+    message: form.message,
+  });
+
+  showToast("Form submitted successfully!", "success");
+
+  setForm({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    message: "",
+  });
+
+} catch (error) {
+  console.error(error);
+  showToast(
+  error?.data?.message ||
+  error?.message ||
+  "Something went wrong",
+  "error"
+);
+} finally {
+  setLoading(false);
+}
+
+
+};
+
+return ( <section className="bg-[#f4f6f6] py-6 md:py-8 lg:py-12 px-3 md:px-4"> <div className="max-w-6xl mx-auto">
+{/* Heading */} <div className="text-center"> <h1 className="text-2xl md:text-4xl lg:text-5xl font-jost font-bold leading-snug">
+The psychology of financial calm, <br /> <span className="text-teal-700">delivered weekly.</span> </h1>
+
+
+      <p className="text-sm md:text-lg lg:text-xl text-[#898989] mt-4 md:mt-5 font-jost max-w-3xl mx-auto">
+        One email. Every week. Psychology-backed insights on financial
+        stress, behaviour patterns, and what it actually takes to feel
+        calmer about money.
+      </p>
+    </div>
+
+    <div className="grid grid-cols-1 md:grid-cols-[40%_60%] lg:grid-cols-2 gap-6 md:gap-4 lg:gap-2 mt-6 md:mt-10 items-center">
+      {/* Image */}
+      <div className="flex justify-center px-2 md:px-0">
+        <img
+          src={GroupNewsLetter}
+          alt="newsletter"
+          className="w-40 sm:w-56 md:w-full max-w-[420px]"
+        />
+      </div>
+
+      {/* Form */}
+      <div className="px-2 md:pl-4 md:pr-6 lg:px-0">
+        <div className="bg-white p-4 md:p-6 rounded-xl shadow-xl w-full max-w-md md:max-w-[520px] mx-auto md:mx-0">
+          <form className="space-y-4" onSubmit={handleSubmit}>
+            <div>
+              <label className="text-xs md:text-sm text-gray-500">
+                First Name
+              </label>
+
+              <input
+                name="firstName"
+                value={form.firstName}
+                onChange={handleChange}
+                className="w-full mt-1 px-3 md:px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-700"
+              />
             </div>
-          </div>
+
+            <div>
+              <label className="text-xs md:text-sm text-gray-500">
+                Last Name
+              </label>
+
+              <input
+                name="lastName"
+                value={form.lastName}
+                onChange={handleChange}
+                className="w-full mt-1 px-3 md:px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-700"
+              />
+            </div>
+
+            <div>
+              <label className="text-xs md:text-sm text-gray-500">
+                Email Address
+              </label>
+
+              <input
+                type="email"
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+                className="w-full mt-1 px-3 md:px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-700"
+              />
+            </div>
+
+            <div>
+              <label className="text-xs md:text-sm text-gray-500">
+                Phone Number
+              </label>
+
+              <input
+                name="phone"
+                value={form.phone}
+                onChange={handleChange}
+                className="w-full mt-1 px-3 md:px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-700"
+              />
+            </div>
+
+            <div>
+              <label className="text-xs md:text-sm text-gray-500">
+                Comment
+              </label>
+
+              <textarea
+                name="message"
+                value={form.message}
+                onChange={handleChange}
+                className="w-full mt-1 px-3 md:px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-700"
+              />
+            </div>
+
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full md:w-40 bg-teal-700 text-white py-2 rounded-md hover:opacity-90 text-sm md:text-base"
+            >
+              {loading ? "Submitting..." : "Submit"}
+            </button>
+          </form>
         </div>
       </div>
-    </section>
-  );
+    </div>
+  </div>
+</section>
+
+
+);
 };
 
 export const WebHome = ({ onNav, showToast }) => {
