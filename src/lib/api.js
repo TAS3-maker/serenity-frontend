@@ -241,8 +241,14 @@ const notifications = {
   read:    (id)     => post(`/api/notifications/${id}/read`),
   readAll: ()       => post('/api/notifications/readAll'),
 };
+
+// ── Contact Form ──────────────────────────────────────────────
+const contact = {
+submit: (body) => post('/api/contact-form', body),
+};
+
 // ── Export ────────────────────────────────────────────────────
 export const api = {
   setToken, getToken, clearToken,notifications,insights,
-  auth, users, community, content, communications, scheduler, admin,
+  auth, users, community, content, communications, scheduler, admin, contact,
 };
