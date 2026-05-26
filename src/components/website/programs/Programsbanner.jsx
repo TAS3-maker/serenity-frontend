@@ -3,14 +3,14 @@ import { useState } from "react";
 
 export default function SerenityTabs() {
   return (
-    <section className="w-full pb-6 md:pb-8 lg:pb-16 px-3 bg-[#F3F5F4]">
+   <section className="w-full pb-6 md:pb-8 lg:pb-16 px-3 bg-[#F3F5F4]">
       <div className="mx-auto text-center">
         <div className="pt-6 md:pt-8">
           <p className="text-[#0D7377] font-medium font-jost text-lg md:text-xl mb-2">
             The SerenityDecoded™ Ecosystem
           </p>
 
-          <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold font-jost text-gray-900 !leading-[1.1] w-full m-auto max-w-[58rem]">
+          <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold font-jost text-gray-900 !leading-tight w-full m-auto max-w-[58rem]">
             Not a product. A complete change in{" "}
             <span className="text-[#0D7377]">how you relate to money.</span>
           </h1>
