@@ -10,7 +10,7 @@ export default function SerenityTabs() {
             The SerenityDecoded™ Ecosystem
           </p>
 
-          <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold font-jost text-gray-900 !leading-tight w-full m-auto !max-w-[58rem]">
+          <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold font-jost text-gray-900 !leading-tight w-full m-auto max-w-[58rem]">
             Not a product. A complete change in{" "}
             <span className="text-[#0D7377]">how you relate to money.</span>
           </h1>
