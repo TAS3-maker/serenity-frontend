@@ -27,7 +27,7 @@ const filtered = useMemo(() => {
 
   if (filter === "active") list = list.filter(u => u.status === "active");
   if (filter === "inactive") list = list.filter(u => u.status === "inactive");
-  if (filter === "premium") list = list.filter(u => u.plan === "premium");
+ 
   if (filter === "new") {
     const now = Date.now();
     list = list.filter(u => u.joinDate && (now - new Date(u.joinDate)) < 7 * 86400000);
@@ -113,7 +113,9 @@ const COLS = [
     key: "plan",
     label: "Plan",
     render: (v) => (
-      <Badge label={planLabel(v)} variant={planVariant(v)} />
+   <div className="font-semibold capitalize text-[13px] ">
+    {v}
+   </div>
     ),
   },
 
@@ -153,110 +155,207 @@ const COLS = [
   },
 ];
 const FILTER_TABS = ["all", "premium", "active", "new", "inactive"];
-  return (
-    <div>
-      {/* Header */}
-      <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
-        <div>
-          <h1 className="font-display font-bold text-xl text-[var(--text)]">Users</h1>
+ return (
+  <div className="w-full overflow-hidden">
+
+    {/* Header */}
+    <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-5 gap-3">
       
+      <div className="min-w-0">
+        <h1 className="font-display font-bold text-lg sm:text-xl text-[var(--text)] break-words">
+          Users
+        </h1>
+      </div>
+
+      {/* BUTTONS */}
+      <div className="flex gap-2 flex-wrap">
+        
+        <Button
+          size="sm"
+          variant="ghost"
+          icon={Download}
+          onClick={() => downloadCSV(filtered)}
+        >
+          Export CSV
+        </Button>
+
+        <Button
+          size="sm"
+          variant="ghost"
+          icon={Upload}
+          onClick={() => setCsvOpen(true)}
+        >
+          Import CSV
+        </Button>
+
+        <Button
+          size="sm"
+          onClick={() => setAddOpen(true)}
+        >
+          + Add User
+        </Button>
+      </div>
+    </div>
+
+    {/* Bulk action bar */}
+    {anySelected && (
+      <div
+        className="flex flex-col lg:flex-row lg:items-center gap-3 px-4 sm:px-5 py-3 rounded-xl mb-4"
+        style={{
+          background: "var(--tealBg)",
+          border: "1px solid var(--tealBorder)",
+        }}
+      >
+        <span className="text-[13px] font-semibold text-[var(--teal)]">
+          {selected.size} selected
+        </span>
+
+        <div className="flex flex-wrap gap-2">
+          
+          <Button
+            size="sm"
+            icon={Mail}
+            onClick={() => bulkDo("email")}
+          >
+            Email selected
+          </Button>
+
+          <Button
+            size="sm"
+            variant="secondary"
+            icon={UserX}
+            onClick={() => setBulkAction("deactivate")}
+          >
+            Deactivate
+          </Button>
+
+          <Button
+            size="sm"
+            variant="danger"
+            icon={Trash2}
+            onClick={() => setBulkAction("delete")}
+          >
+            Delete
+          </Button>
+
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => setSelected(new Set())}
+          >
+            Clear
+          </Button>
         </div>
-        <div className="flex gap-2">
-          <Button size="sm" variant="ghost" icon={Download} onClick={()=>downloadCSV(filtered)}>Export CSV</Button>
-          <Button size="sm" variant="ghost" icon={Upload} onClick={()=>setCsvOpen(true)}>Import CSV</Button>
-        <Button size="sm" onClick={() => setAddOpen(true)}>
-  + Add User
-</Button>
+      </div>
+    )}
+
+    {/* FILTER BAR */}
+    <div className="flex flex-col gap-3 p-4 border-b border-[var(--border)]">
+
+      {/* SEARCH FULL WIDTH IN MOBILE */}
+      <SearchBar
+        value={search}
+        onChange={(v) => {
+          setSearch(v);
+          setPage(1);
+        }}
+        placeholder="Search users…"
+        className="w-full"
+      />
+
+      {/* TABS + RESULT */}
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+
+        {/* NAV TABS */}
+        <div className="flex gap-2.5 flex-wrap">
+          {FILTER_TABS.map((t) => (
+            <button
+              key={t}
+              onClick={() => {
+                setFilter(t);
+                setPage(1);
+              }}
+              className="px-2 py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold capitalize whitespace-nowrap"
+              style={{
+                background:
+                  filter === t
+                    ? "var(--teal)"
+                    : "var(--bgMuted)",
+
+                color:
+                  filter === t
+                    ? "#fff"
+                    : "var(--textMuted)",
+              }}
+            >
+              {t}
+            </button>
+          ))}
+        </div>
+
+        <div className="text-[12px] text-[var(--textMuted)] whitespace-nowrap">
+          {filtered.length} results
+        </div>
+      </div>
+    </div>
+
+    {/* TABLE */}
+    <Card noPad>
+      
+      <div className="w-full overflow-x-auto">
+        <div className="min-w-[900px]">
+          <Table
+            cols={COLS}
+            rows={paged}
+            empty="No users match this filter."
+          />
         </div>
       </div>
 
-      {/* Bulk action bar */}
-      {anySelected && (
-        <div className="flex items-center gap-3 px-5 py-3 rounded-xl mb-4 flex-wrap"
-          style={{ background:"var(--tealBg)", border:"1px solid var(--tealBorder)" }}>
-          <span className="text-[13px] font-semibold text-[var(--teal)]">{selected.size} selected</span>
-          <div className="flex gap-2 flex-wrap">
-            <Button size="sm" icon={Mail} onClick={()=>bulkDo("email")}>Email selected</Button>
-            <Button size="sm" variant="secondary" icon={UserX} onClick={()=>setBulkAction("deactivate")}>Deactivate</Button>
-            <Button size="sm" variant="danger" icon={Trash2} onClick={()=>setBulkAction("delete")}>Delete</Button>
-            <Button size="sm" variant="ghost" onClick={()=>setSelected(new Set())}>Clear</Button>
-          </div>
-        </div>
-      )}
+      <div className="px-3 sm:px-4 overflow-x-auto">
+        <Pager
+          page={page}
+          total={filtered.length}
+          perPage={PER}
+          onChange={setPage}
+        />
+      </div>
+    </Card>
 
-       <div className="flex items-center gap-3 p-4 border-b border-[var(--border)] flex-wrap">
+    <CsvImportModal
+      open={csvOpen}
+      onClose={() => setCsvOpen(false)}
+      onImport={(rows) => {
+        setUsers((u) => [...u, ...rows]);
+        showToast(`${rows.length} users imported.`);
+      }}
+    />
 
-  <SearchBar
-    value={search}
-    onChange={v => { setSearch(v); setPage(1); }}
-    placeholder="Search users…"
-    className="w-[260px]"
-  />
+    <Confirm
+      open={bulkAction === "delete"}
+      onClose={() => setBulkAction(null)}
+      title={`Delete ${selected.size} users?`}
+      message="This permanently deletes all selected user accounts and their data."
+      danger
+      confirmLabel="Delete All"
+      onConfirm={() => bulkDo("delete")}
+    />
 
-  {/* NAV TABS */}
-  <div className="flex gap-2">
-    {FILTER_TABS.map((t) => (
-      <button
-        key={t}
-        onClick={() => { setFilter(t); setPage(1); }}
-        className="px-3 py-1.5 rounded-lg text-xs font-semibold capitalize"
-        style={{
-          background: filter === t ? "var(--teal)" : "var(--bgMuted)",
-          color: filter === t ? "#fff" : "var(--textMuted)",
-        }}
-      >
-        {t}
-      </button>
-    ))}
+    <Confirm
+      open={bulkAction === "deactivate"}
+      onClose={() => setBulkAction(null)}
+      title={`Deactivate ${selected.size} users?`}
+      message="These users will lose access until reactivated."
+      confirmLabel="Deactivate"
+      onConfirm={() => bulkDo("deactivate")}
+    />
+
+    <AddUserModal
+      open={addOpen}
+      onClose={() => setAddOpen(false)}
+      showToast={showToast}
+      reload={reload}
+    />
   </div>
-
-  <div className="ml-auto text-[12px] text-[var(--textMuted)]">
-    {filtered.length} results
-  </div>
-</div>
-      <Card noPad>
-        {/* Toolbar */}
-
-        <Table cols={COLS} rows={paged} empty="No users match this filter." />
-        <div className="px-4"><Pager page={page} total={filtered.length} perPage={PER} onChange={setPage}/></div>
-      </Card>
-
-      <CsvImportModal
-        open={csvOpen}
-        onClose={()=>setCsvOpen(false)}
-        onImport={rows=>{
-          setUsers(u=>[...u,...rows]);
-          showToast(`${rows.length} users imported.`);
-        }}
-      />
-
-      <Confirm
-        open={bulkAction==="delete"}
-        onClose={()=>setBulkAction(null)}
-        title={`Delete ${selected.size} users?`}
-        message="This permanently deletes all selected user accounts and their data."
-        danger
-        confirmLabel="Delete All"
-        onConfirm={()=>bulkDo("delete")}
-      />
-      <Confirm
-        open={bulkAction==="deactivate"}
-        onClose={()=>setBulkAction(null)}
-        title={`Deactivate ${selected.size} users?`}
-        message="These users will lose access until reactivated."
-        confirmLabel="Deactivate"
-        onConfirm={()=>bulkDo("deactivate")}
-      />
-   <AddUserModal
-  open={addOpen}
-  onClose={() => setAddOpen(false)}
-  showToast={showToast}
-   reload={reload}
-
-/>
-      
-    </div>
-    
-    
-  );
+);
 };
