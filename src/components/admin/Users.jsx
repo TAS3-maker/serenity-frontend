@@ -14,7 +14,7 @@ const apiUserToUi = (u) => ({
   name:         u.name || "",
   email:        u.email || "",
   profile:      u.stressProfile || u.profile || "avoider",
-  plan:         u.plan === "premium" ? "premium" : "free",
+  plan:         u.plan||"",
   country:      u.country || "—",
   status:       u.isActive === false ? "inactive" : "active",
   streak:       u.streak ?? 0,
@@ -49,45 +49,118 @@ const [loadingUser, setLoadingUser] = useState(false);
     }
   };
 const handleViewUser = async (id) => {
+  
   try {
     setLoadingUser(true);
 
     const res = await api.admin.getUserById(id);
-
+console.log("subscription =>", res.user);
     if (!res?.user) throw new Error("Invalid response");
 
     const u = res.user;
 
-    const formattedUser = {
-      id: u._id,
-      name: u.name || "-",
-      email: u.email || "-",
-      profile: u.stressProfile || "avoider",
-      plan: u.plan || "free",
-      country: u.country || "-",
-      device: u.device || "-",
-      status: u.isActive ? "active" : "inactive",
+   const formattedUser = {
+   // Basic
+  id: u._id,
+  name: u.name || "-",
+  email: u.email || "-",
+  phone: u.phone || "-",
+  avatarUrl: u.avatarUrl || "",
 
-      streak: u.streak ?? 0,
-      reliefScore: u.reliefScore ?? 0,
-      day: u.programDay ?? 0,
+  // Profile / Account
+  profile: u.stressProfile || "avoider",
+  stressProfile: u.stressProfile || "-",
+  plan: u.plan || "",
+  role: u.role || "user",
+  status: u.isActive ? "active" : "inactive",
+  isAdmin: u.isAdmin ?? false,
+  assessmentDone: u.assessmentDone ?? false,
 
-      missionsComplete: u.missionsComplete ?? 0,
-      totalMissions: res.missions?.length ?? 0,
+  // Progress
+  streak: u.streak ?? 0,
+  lastStreak: u.lastStreak ?? 0,
+  reliefScore: u.reliefScore ?? 0,
+  weeklyCalmScore: u.weeklyCalmScore ?? 0,
+  day: u.programDay ?? 0,
+  programDay: u.programDay ?? 0,
+  missionsComplete: u.missionsComplete ?? 0,
+  totalMissions: 30, // fixed program days
 
-      joined: u.createdAt
-        ? new Date(u.createdAt).toLocaleDateString()
-        : "-",
+  // Mental Health Data
+  fcl: u.fcl || "-",
+  aaravTone: u.aaravTone || "-",
+  aaravLastInteraction:
+    u.aaravLastInteraction || null,
 
-      lastActive: u.lastActiveDate
-        ? new Date(u.lastActiveDate).toLocaleDateString()
-        : "-",
+  // Locale / Preferences
+  timezone: u.timezone || "-",
+  language: u.language || "en",
+  pusherInterests:
+    u.pusherInterests || [],
+
+  // Notification Preferences
+  notifPrefs: {
+    emailEnabled:
+      u.notifPrefs?.emailEnabled ??
+      false,
+    pushEnabled:
+      u.notifPrefs?.pushEnabled ??
+      false,
+    smsEnabled:
+      u.notifPrefs?.smsEnabled ??
+      false,
+    dailyMission:
+      u.notifPrefs?.dailyMission ??
+      false,
+    streakReminder:
+      u.notifPrefs?.streakReminder ??
+      false,
+    aaravNudges:
+      u.notifPrefs?.aaravNudges ??
+      false,
+    communityReplies:
+      u.notifPrefs
+        ?.communityReplies ??
+      false,
+    progressReminder:
+      u.notifPrefs
+        ?.progressReminder ??
+      false,
+  },
 
 
-      history: res.missions || [],
-      journal: res.journals || [],
-      payments: res.subscription ? [res.subscription] : [],
-    };
+  // Dates
+  joined: u.createdAt
+    ? new Date(
+        u.createdAt
+      ).toLocaleDateString()
+    : "-",
+
+  createdAt: u.createdAt || null,
+
+  updatedAt: u.updatedAt
+    ? new Date(
+        u.updatedAt
+      ).toLocaleString()
+    : "-",
+
+  lastActive: u.lastActiveDate
+    ? new Date(
+        u.lastActiveDate
+      ).toLocaleDateString()
+    : "-",
+
+  lastActiveDate:
+    u.lastActiveDate || null,
+
+  // Raw data if needed later
+  raw: u,
+  history: res.missions || [],
+  journal: res.journals || [],
+
+  // ✅ THIS IS THE FIX
+  subscription: res.subscription || null,
+};
 
     setSelectedUser(formattedUser);
     setViewId(id);
