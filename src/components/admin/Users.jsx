@@ -202,10 +202,12 @@ if (viewId !== null) {
   setUsers={setUsers}
   setSelectedUser={setSelectedUser}
   refreshUser={handleViewUser}
+    setData={setData}
   onBack={() => {
     setViewId(null);
     setSelectedUser(null);
   }}
+  
   showToast={showToast}
   loading={loadingUser}
 />
