@@ -196,17 +196,19 @@ console.log("subscription =>", res.user);
 
 if (viewId !== null) {
   return (
-    <UserDetail
-      user={selectedUser || {}}   // ✅ always render
-      users={users}
-      setUsers={setUsers}
-      onBack={() => {
-        setViewId(null);
-        setSelectedUser(null);
-      }}
-      showToast={showToast}
-      loading={loadingUser} // optional
-    />
+<UserDetail
+  user={selectedUser || {}}
+  users={users}
+  setUsers={setUsers}
+  setSelectedUser={setSelectedUser}
+  refreshUser={handleViewUser}
+  onBack={() => {
+    setViewId(null);
+    setSelectedUser(null);
+  }}
+  showToast={showToast}
+  loading={loadingUser}
+/>
   );
 }
   if (loading && users.length === 0) {
