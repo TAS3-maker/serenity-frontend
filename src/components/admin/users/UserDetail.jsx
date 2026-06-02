@@ -20,6 +20,7 @@ export const UserDetail = ({
     refreshUser,
   onBack,
   showToast,
+  setData
 }) => {
   const [tab, setTab] =
     useState("Overview");
@@ -173,8 +174,28 @@ const handleSaveUser = async () => {
     );
   }
 };
+const handleDeleteUser = async () => {
+  try {
+    const userId = user.id || user._id;
 
+    await api.users.delete(userId);
 
+    setData((prev) =>
+      prev.filter(
+        (u) => (u._id || u.id) !== userId
+      )
+    );
+
+    showToast("User deleted successfully");
+
+    onBack();
+  } catch (e) {
+    showToast(
+      e?.data?.message || "Delete failed",
+      "error"
+    );
+  }
+};
   return (
     <div>
       {/* Back */}
@@ -809,25 +830,14 @@ const handleSaveUser = async () => {
   </div>
 </Modal>
       {/* DELETE */}
-      <Confirm
-        open={
-          delOpen
-        }
-        onClose={() =>
-          setDelOpen(
-            false
-          )
-        }
-        title="Delete User?"
-        message="This will permanently delete the user."
-        danger
-        onConfirm={() => {
-          showToast(
-            "User deleted"
-          );
-          onBack();
-        }}
-      />
+  <Confirm
+  open={delOpen}
+  onClose={() => setDelOpen(false)}
+  title="Delete User?"
+  message="This will permanently delete the user."
+  danger
+  onConfirm={handleDeleteUser}
+/>
     </div>
   );
 };
